@@ -5,22 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/png" href="{{ asset('Images/LogoInnovAid.png') }}">
+
 </head>
 
 <body class="">
     <div class="flex w-full h-full">
-        
+
         <!-- Left Section -->
         <div class="bg-white w-1/2 flex justify-center items-center">
 
 
             <form class="w-full max-w-xs">
-                <div class="mb-15"> <h1 class="text-3xl font-bold"> WELCOME BACK </h1></div>
-                
-                <label for="email-address-icon" class="mb-2 text-sm font-medium text-gray-900">
-                    Enter Email Address 
-                </label>
+                <div class="mb-15">
+                    <h1 class="text-3xl font-bold text-center"> WELCOME BACK </h1>
+                </div>
+
+
+                <div class="flex justify-center mb-5">
+                    <div class="inline-flex rounded-md shadow-xs" role="group">
+                        <button type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            Student
+                        </button>
+                        <button type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            Donor
+                        </button>
+                        <button type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            Admin
+                        </button>
+                    </div>
+                </div>
+
+
+
+
                 <div class="relative">
+                    <label for="email-address-icon" class="mb-2 text-sm font-medium text-gray-900">
+                        Email Address
+                    </label>
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                         <!-- Mail icon -->
                         <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
@@ -51,7 +76,9 @@
                 </div>
 
                 <div class="mt-5">
-                    <span class="text-center"> <p>Dont have an account yet? <a href="#" class="text-blue-600"> Sign up here </a> </p> </span>
+                    <span class="text-center">
+                        <p>Dont have an account yet? <a href="#" class="text-blue-600"> Sign up here </a> </p>
+                    </span>
                 </div>
 
                 <div class="flex justify-center mt-5 ">
@@ -71,7 +98,7 @@
         <!-- Right Section -->
         <div class="bg-blue-500 w-1/2 flex justify-center items-center">
             <h1 class="text-white text-center text-3xl font-bold">
-               
+
             </h1>
         </div>
 
