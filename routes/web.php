@@ -16,7 +16,7 @@ Route::get('/admin', function () {
 })->name('admin.page');
 
 
-Route::get('/admindashboard', function () {
+Route::get('/admin/dashboard', function () {
     return view('admin.admindashboard');
 })->name('admin.dashboard');
 
