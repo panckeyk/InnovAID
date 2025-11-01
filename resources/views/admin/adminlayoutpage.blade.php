@@ -1,3 +1,12 @@
 <x-navbar :is-admin="true">
-    <h1> Hello World </h1>
+    <div class="flex justify-center mx-65">
+        <div class="flex gap-20 flex-wrap">
+            <x-campaigncard/>
+            <x-campaigncard/>
+            <x-campaigncard/>
+            <x-campaigncard/>
+            <x-campaigncard/>
+        </div>
+
+    </div>
 </x-navbar>

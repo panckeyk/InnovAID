@@ -1,4 +1,4 @@
-@props(['isAdmin' => false, 'isAdminDashboard' => false])
+@props(['isAdmin' => false, 'isAdminDashboard' => false, 'isDonor' => false, 'isUserCampaign' => false, 'isCampaignPage' => false])
 
 
 <!DOCTYPE html>
@@ -35,17 +35,19 @@
                                         <li>
                                             <a href="{{ route('admin.page') }}"
                                                 class="py-2 px-3 rounded-sm
-                                                {{ request()->routeIs('admin.page')
-                                                ? 'text-blue-700 dark:text-blue-500'
-                                                : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}" aria-current="page">
+                                                                {{ request()->routeIs('admin.page')
+                        ? 'text-blue-700 dark:text-blue-500'
+                        : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}"
+                                                aria-current="page">
                                                 Dashboard
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('admin.dashboard') }}" class="py-2 px-3 rounded-sm
-                                                {{ request()->routeIs('admin.dashboard')
-                                                ? 'text-blue-700 dark:text-blue-500'
-                                                : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}">
+                                            <a href="{{ route('admin.dashboard') }}"
+                                                class="py-2 px-3 rounded-sm
+                                                                {{ request()->routeIs('admin.dashboard')
+                        ? 'text-blue-700 dark:text-blue-500'
+                        : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}">
                                                 Admin Dashboard
                                             </a>
                                         </li>
@@ -54,16 +56,21 @@
                     @else
                         <!-- 🔸 Regular User Navigation -->
                         <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent dark:bg-transparent">
+                            @unless ($isDonor)
                             <li>
-                                <a href="#" class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500"
-                                    aria-current="page">Discover</a>
+                                <a href="{{ route('user.page') }}" class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
+                                {{ request()->routeIs('user.page') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
+                                    aria-current="page"> Discover </a>
                             </li>
-                            <li>
-                                <a href="#"
-                                    class="py-2 px-3 text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500">
-                                    My Campaigns
-                                </a>
-                            </li>
+                                <li>
+                                    <a href="{{ route('user.campaign') }}"
+                                         class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
+                                {{ request()->routeIs('user.campaign') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
+                                    aria-current="page">
+                                        My Campaigns
+                                    </a>
+                                </li>
+                            @endunless
                         </ul>
                     @endif
                 </div>
@@ -72,9 +79,10 @@
                 <div class="flex items-center space-x-3">
 
                     <!-- 🔸 Create Campaign (only visible to non-admins) -->
-                    @unless ($isAdmin or $isAdminDashboard)
+                    @unless ($isAdmin or $isAdminDashboard or $isDonor)
                         <div>
-                            <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl">
+                            <button type="button"
+                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl">
                                 <span class="text-white p-2.5 flex justify-between gap-4">
                                     <x-icons.plusicon />
                                     <h1>Create Campaign</h1>
@@ -131,7 +139,7 @@
         </nav>
     </header>
 
-    @unless ($isAdminDashboard)
+    @unless ($isAdminDashboard or $isUserCampaign or$isCampaignPage)
         <div class="text-center mt-15">
             <h1 class="text-3xl font-bold">Discover Projects</h1>
             <h1 class="text-xl text-gray-600 mt-2">

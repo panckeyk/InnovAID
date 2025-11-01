@@ -39,9 +39,6 @@
                     </div>
                 </div>
 
-
-
-
                 <div class="relative">
                     <label for="email-address-icon" class="mb-2 text-sm font-medium text-gray-900">
                         Email Address
