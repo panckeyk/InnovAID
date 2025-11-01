@@ -32,5 +32,16 @@ Route::get('/campaign/page', function () {
     return view('components.campaignpage');
 })->name('campaign.page');
 
+Route::get('/create', function () {
+    return view('user.usercreatecampaignpage');
+})->name('create.page');
+
+Route::get('/profile', function () {
+    return view('user.userprofilepage');
+})->name('user.profile');
+
+
+
+
 
 

@@ -69,23 +69,35 @@
 
         <!-- Button Group + Dynamic Section -->
         <div x-data="{ view: 'pending' }" class="mt-10">
+
             <!-- Button Group -->
             <div>
                 <div class="inline-flex rounded-md shadow-xs" role="group">
-                    <button type="button" @click="view = 'pending'"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+
+                    <!-- Pending Review -->
+                    <button @click="view = 'pending'"
+                        :class="view === 'pending'
+          ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-s-lg dark:bg-gray-700 dark:border-white'
+          : 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'">
                         Pending Review
                     </button>
 
-                    <button type="button" @click="view = 'all'"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                    <!-- All Campaigns -->
+                    <button @click="view = 'all'"
+                        :class="view === 'all'
+          ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border-t border-b border-gray-900 dark:bg-gray-700 dark:border-white'
+          : 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'">
                         All Campaigns
                     </button>
 
-                    <button type="button" @click="view = 'analytics'"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                    <!-- Analytics -->
+                    <button @click="view = 'analytics'"
+                        :class="view === 'analytics'
+          ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-e-lg dark:bg-gray-700 dark:border-white'
+          : 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'">
                         Analytics
                     </button>
+
                 </div>
             </div>
 
@@ -93,66 +105,68 @@
             <div x-show="view === 'pending'"
                 class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
                 <div class="flex justify-start">
-                    <h5 class="mb-2 text-lg text-center font-normal"> Campaigns Pending Approval </h5>
+                    <h5 class="mb-2 text-lg text-center font-normal">Campaigns Pending Approval</h5>
                 </div>
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400"> Review and approve student project submissions </p>
+                <p class="text-gray-500 dark:text-gray-400">Review and approve student project submissions</p>
+                <x-pendingcardtable />
+            </div>
+
+            <!-- All Campaigns -->
+            <div x-show="view === 'all'" 
+                class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-start">
+                    <h5 class="mb-2 text-lg text-center font-normal">All Campaigns</h5>
                 </div>
-                <div>
-                    <x-pendingcardtable />
-                </div>
+                <p class="text-gray-500 dark:text-gray-400">Overview of all campaigns on the platform</p>
+                <x-allcampaign />
             </div>
 
             <!-- Analytics -->
+            <div x-show="view === 'analytics'" 
+                class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-start">
+                    <h5 class="mb-2 text-lg text-center font-normal">Top Donors</h5>
+                </div>
+                <x-topdonor />
+            </div>
+
             <div x-show="view === 'analytics'"
                 class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                <div class="flex justify-start">
-                    <h5 class="mb-2 text-lg text-center font-normal"> Top donors </h5>
-                </div>
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400"> </p>
-                </div>
-                <div>
-                    <x-topdonor />
-                </div>
-
-
-
-            </div>
-
-            <div x-show="view === 'analytics'" class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
                 <div class="text-center">
-                    <h1 class="text-2xl mb-10"> Category Distribution </h1>
+                    <h1 class="text-2xl mb-10">Category Distribution</h1>
                 </div>
 
-                <div class="flex justify-center gap-10 ">
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Technology </h1></div>
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Social Impact </h1></div>
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Research </h1></div>
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Art and Design  </h1></div>
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Environment </h1></div>
-                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"> <h1> Health </h1></div>
-
-                </div>
-
-            </div>
-
-
-            <!-- All Campaigns (optional placeholder for now) -->
-            <div x-show="view === 'all'"
-                class="mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                <div class="flex justify-start">
-                    <h5 class="mb-2 text-lg text-center font-normal"> All Campaign </h5>
-                </div>
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400"> Overview of all campaigns on the platform
-                    </p>
-                </div>
-                <div>
-                    <x-allcampaign />
+                <div class="flex justify-center gap-10 flex-wrap">
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Technology</h1>
+                    </div>
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Social Impact</h1>
+                    </div>
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Research</h1>
+                    </div>
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Art and Design</h1>
+                    </div>
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Environment</h1>
+                    </div>
+                    <div
+                        class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h1>Health</h1>
+                    </div>
                 </div>
             </div>
         </div>
+
+       
+
 
 
 
