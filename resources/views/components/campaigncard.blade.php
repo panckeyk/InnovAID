@@ -9,7 +9,7 @@
            >
 
     <a>
-        <div class="h-48 w-full">
+        <div class="h-40 w-full">
             <img class="w-full h-full object-cover" src="{{ asset('Images/LogoInnovAid.png') }}" alt="Campaign Image">
         </div>
     </a>
@@ -62,8 +62,5 @@
             </div>
         </div>
 
-        <p class="mt-5 font-normal text-gray-700 dark:text-gray-400">
-            Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
-        </p>
     </div>
 </div>

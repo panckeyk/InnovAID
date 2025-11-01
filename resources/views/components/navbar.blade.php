@@ -1,4 +1,6 @@
-@props(['isAdmin' => false, 'isAdminDashboard' => false, 'isDonor' => false, 'isUserCampaign' => false, 'isCampaignPage' => false])
+@props(['isAdmin' => false, 'isAdminDashboard' => false, 'isDonor' => false, 'isUserCampaign' => false, 'isCampaignPage' => false, 'isCreatePage' => false,
+'isUserProfile' => false
+])
 
 
 <!DOCTYPE html>
@@ -33,9 +35,8 @@
                                     <!-- 🔸 Admin Navigation -->
                                     <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent">
                                         <li>
-                                            <a href="{{ route('admin.page') }}"
-                                                class="py-2 px-3 rounded-sm
-                                                                {{ request()->routeIs('admin.page')
+                                            <a href="{{ route('admin.page') }}" class="py-2 px-3 rounded-sm
+                                                                                                {{ request()->routeIs('admin.page')
                         ? 'text-blue-700 dark:text-blue-500'
                         : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}"
                                                 aria-current="page">
@@ -43,9 +44,8 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('admin.dashboard') }}"
-                                                class="py-2 px-3 rounded-sm
-                                                                {{ request()->routeIs('admin.dashboard')
+                                            <a href="{{ route('admin.dashboard') }}" class="py-2 px-3 rounded-sm
+                                                                                                {{ request()->routeIs('admin.dashboard')
                         ? 'text-blue-700 dark:text-blue-500'
                         : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}">
                                                 Admin Dashboard
@@ -57,16 +57,17 @@
                         <!-- 🔸 Regular User Navigation -->
                         <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent dark:bg-transparent">
                             @unless ($isDonor)
-                            <li>
-                                <a href="{{ route('user.page') }}" class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
-                                {{ request()->routeIs('user.page') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
-                                    aria-current="page"> Discover </a>
-                            </li>
+                                <li>
+                                    <a href="{{ route('user.page') }}"
+                                        class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
+                                                {{ request()->routeIs('user.page') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
+                                        aria-current="page"> Discover </a>
+                                </li>
                                 <li>
                                     <a href="{{ route('user.campaign') }}"
-                                         class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
-                                {{ request()->routeIs('user.campaign') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
-                                    aria-current="page">
+                                        class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
+                                                {{ request()->routeIs('user.campaign') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500'}} "
+                                        aria-current="page">
                                         My Campaigns
                                     </a>
                                 </li>
@@ -82,7 +83,8 @@
                     @unless ($isAdmin or $isAdminDashboard or $isDonor)
                         <div>
                             <button type="button"
-                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl">
+                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
+                                onclick="window.location.href='{{ route('create.page') }}'">
                                 <span class="text-white p-2.5 flex justify-between gap-4">
                                     <x-icons.plusicon />
                                     <h1>Create Campaign</h1>
@@ -90,13 +92,6 @@
                             </button>
                         </div>
                     @endunless
-
-                    <!-- Notification Bell -->
-                    <div>
-                        <button type="button" class="p-3 rounded-xl">
-                            <span><x-icons.bellicon /></span>
-                        </button>
-                    </div>
 
                     <!-- 🔹 Profile Menu -->
                     <button type="button"
@@ -121,12 +116,8 @@
                         </div>
                         <ul aria-labelledby="user-menu-button">
                             <li>
-                                <a href="#"
+                                <a href="{{ route('user.profile') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
                             </li>
                             <li>
                                 <a href="{{ route('loginpage') }}"
@@ -139,7 +130,7 @@
         </nav>
     </header>
 
-    @unless ($isAdminDashboard or $isUserCampaign or$isCampaignPage)
+    @unless ($isAdminDashboard or $isUserCampaign or $isCampaignPage or $isCreatePage or $isUserProfile)
         <div class="text-center mt-15">
             <h1 class="text-3xl font-bold">Discover Projects</h1>
             <h1 class="text-xl text-gray-600 mt-2">
