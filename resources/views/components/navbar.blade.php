@@ -1,5 +1,5 @@
 @props(['isAdmin' => false, 'isAdminDashboard' => false, 'isDonor' => false, 'isUserCampaign' => false, 'isCampaignPage' => false, 'isCreatePage' => false,
-'isUserProfile' => false
+'isUserProfile' => false, 'isAdminProfile' => false, 'isDonorProfile' => false
 ])
 
 
@@ -56,7 +56,7 @@
                     @else
                         <!-- 🔸 Regular User Navigation -->
                         <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent dark:bg-transparent">
-                            @unless ($isDonor)
+                            @unless ($isDonor or $isDonorProfile)
                                 <li>
                                     <a href="{{ route('user.page') }}"
                                         class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
@@ -80,7 +80,7 @@
                 <div class="flex items-center space-x-3">
 
                     <!-- 🔸 Create Campaign (only visible to non-admins) -->
-                    @unless ($isAdmin or $isAdminDashboard or $isDonor)
+                    @unless ($isAdmin or $isAdminDashboard or $isDonor or $isDonorProfile) 
                         <div>
                             <button type="button"
                                 class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
@@ -130,7 +130,7 @@
         </nav>
     </header>
 
-    @unless ($isAdminDashboard or $isUserCampaign or $isCampaignPage or $isCreatePage or $isUserProfile)
+    @unless ($isAdminDashboard or $isUserCampaign or $isCampaignPage or $isCreatePage or $isUserProfile or $isAdminProfile or $isDonorProfile)
         <div class="text-center mt-15">
             <h1 class="text-3xl font-bold">Discover Projects</h1>
             <h1 class="text-xl text-gray-600 mt-2">

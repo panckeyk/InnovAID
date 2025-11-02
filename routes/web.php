@@ -44,7 +44,13 @@ Route::get('/signup', function () {
     return view('signuppage');
 })->name('signup');
 
+Route::get('/admin/profile', function () {
+    return view('admin.adminprofilepage');
+})->name('admin.profile');
 
+Route::get('/donor/profile', function () {
+    return view('donor.donorprofilepage');
+})->name('donor.profile');
 
 
 
