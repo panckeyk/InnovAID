@@ -23,7 +23,7 @@
         <h5 class="my-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Noteworthy technology acquisitions 2021
         </h5>
-
+        
         <div class="mt-5">
             <div class="flex items-center gap-3">
                 <!-- Profile Image -->

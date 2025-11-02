@@ -40,7 +40,7 @@
                         ? 'text-blue-700 dark:text-blue-500'
                         : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}"
                                                 aria-current="page">
-                                                Dashboard
+                                                Discover
                                             </a>
                                         </li>
                                         <li>
