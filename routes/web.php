@@ -1,56 +1,44 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DonorController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CampaignController;
 
-Route::get('/', function () {
-    return view('loginpage');
-})->name('loginpage');
+// Auth
+Route::get('/', [AuthController::class, 'showLogin'])->name('loginpage');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/signup', [AuthController::class, 'showSignup'])->name('signuppage');
+Route::post('/signup', [AuthController::class, 'register'])->name('signup.submit');
+Route::post('/', [AuthController::class, 'login'])->name('login.submit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+//Middleware
+Route::middleware('auth')->group(function () {
+
+    // User routes
+    Route::get('/user', fn() => view('user.userlayoutpage'))->name('user.page');
+    Route::get('/user/mycampaign', fn() => view('user.usermycampaignpage'))->name('user.campaign');
+    Route::get('/create', fn() => view('user.usercreatecampaignpage'))->name('create.page');
+    Route::get('/profile', fn() => view('user.userprofilepage'))->name('user.profile');
+
+    // Admin routes
+    Route::get('/admin', fn() => view('admin.adminlayoutpage'))->name('admin.page');
+    Route::get('/admin/dashboard', fn() => view('admin.admindashboard'))->name('admin.dashboard');
+    Route::get('/admin/profile', fn() => view('admin.adminprofilepage'))->name('admin.profile');
+
+    // Donor routes
+    Route::get('/donor', fn() => view('donor.donorlayoutpage'))->name('donor.page');
+    Route::get('/donor/profile', fn() => view('donor.donorprofilepage'))->name('donor.profile');
+
+    // Campaign Page
+    Route::get('/campaign/page', [CampaignController::class, 'showCampaignPage'])->name('campaign.page');
 
 
-Route::get('/user', function () {
-    return view('user.userlayoutpage');
-})->name('user.page');
-
-Route::get('/user/mycampaign', function () {
-    return view('user.usermycampaignpage');
-})->name('user.campaign');
-
-Route::get('/admin', function () {
-    return view('admin.adminlayoutpage');
-})->name('admin.page');
+});
 
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.admindashboard');
-})->name('admin.dashboard');
-
-Route::get('/donor', function () {
-    return view('donor.donorlayoutpage');
-})->name('donor.page');
-
-Route::get('/campaign/page', function () {
-    return view('components.campaignpage');
-})->name('campaign.page');
-
-Route::get('/create', function () {
-    return view('user.usercreatecampaignpage');
-})->name('create.page');
-
-Route::get('/profile', function () {
-    return view('user.userprofilepage');
-})->name('user.profile');
-
-Route::get('/signup', function () {
-    return view('signuppage');
-})->name('signup');
-
-Route::get('/admin/profile', function () {
-    return view('admin.adminprofilepage');
-})->name('admin.profile');
-
-Route::get('/donor/profile', function () {
-    return view('donor.donorprofilepage');
-})->name('donor.profile');
 
 
 

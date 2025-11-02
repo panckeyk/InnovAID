@@ -1,5 +1,20 @@
-@props(['isAdmin' => false, 'isAdminDashboard' => false, 'isDonor' => false, 'isUserCampaign' => false, 'isCampaignPage' => false, 'isCreatePage' => false,
-'isUserProfile' => false, 'isAdminProfile' => false, 'isDonorProfile' => false
+@php
+    use Illuminate\Support\Facades\Auth;
+    $role = Auth::check() ? Auth::user()->role : null;
+@endphp
+
+@props([
+    'isAdmin' => false,
+    'isAdminDashboard' => false,
+    'isDonor' => false,
+    'isUserCampaign' => false,
+    'isCampaignPage' => false,
+    'isCreatePage' => false,
+    'isUserProfile' => false,
+    'isAdminProfile' => false,
+    'isDonorProfile' => false,
+    'isUserPage' => false,
+    'role' => null
 ])
 
 
@@ -31,7 +46,7 @@
                     </a>
 
                     <!-- Nav Links -->
-                    @if ($isAdmin or $isAdminDashboard)
+                    @if ($isAdmin or $isAdminDashboard or $role === 'admin')
                                     <!-- 🔸 Admin Navigation -->
                                     <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent">
                                         <li>
@@ -56,7 +71,7 @@
                     @else
                         <!-- 🔸 Regular User Navigation -->
                         <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent dark:bg-transparent">
-                            @unless ($isDonor or $isDonorProfile)
+                            @unless ($isDonor or $isDonorProfile or $role === 'donor')
                                 <li>
                                     <a href="{{ route('user.page') }}"
                                         class="py-2 px-3 text-blue-700 rounded-sm dark:text-blue-500 
@@ -80,7 +95,7 @@
                 <div class="flex items-center space-x-3">
 
                     <!-- 🔸 Create Campaign (only visible to non-admins) -->
-                    @unless ($isAdmin or $isAdminDashboard or $isDonor or $isDonorProfile) 
+                    @if ($role === 'student' or $isUserPage or $isUserCampaign)
                         <div>
                             <button type="button"
                                 class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
@@ -91,40 +106,63 @@
                                 </span>
                             </button>
                         </div>
-                    @endunless
+                    @endif
 
                     <!-- 🔹 Profile Menu -->
+                     @auth
                     <button type="button"
                         class="flex items-center p-3 text-sm rounded-xl hover:bg-gray-100 dark:focus:ring-gray-600"
                         id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                         data-dropdown-placement="bottom">
 
                         <img class="w-8 h-8 rounded-full"
-                            src="https://scontent.fmnl17-7.fna.fbcdn.net/v/t39.30808-1/564573792_122143664882803655_3207956134899640240_n.jpg?stp=c0.51.960.960a_dst-jpg_s160x160_tt6&_nc_cat=108&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeGzWJhcmSJ6gPup8gsVMdXsoWT97wJ5HCehZP3vAnkcJxmx1HtL88dkk7OUruufssUjQn9KQ8cE2N01JDpK7cGu&_nc_ohc=We6aogr25N0Q7kNvwHRIULk&_nc_oc=AdnqYzDxVLoYdYAzlU7W0L4xZSlWwgq8ohkBeQy9kRFpWK4is8NQIVsU_VJ8-LYSE-Y&_nc_zt=24&_nc_ht=scontent.fmnl17-7.fna&_nc_gid=a3gMmjy7ykKyiWCOV1TdOw&oh=00_AffBWSHxyRYpPE63cXVrDFf2woFxXXPhlqCOAh4uOPxlsw&oe=6907E344"
+                            src=""
                             alt="user photo">
 
-                        <span class="ml-5">Sample Name</span>
+                        <span class="ml-5">{{ Auth::user()->firstname}} {{ Auth::user()->lastname}}</span>
                     </button>
 
                     <!-- Dropdown menu -->
+                     
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
                         id="user-dropdown">
                         <div class="px-4 py-3">
-                            <span class="block text-sm text-gray-900 dark:text-white">Sample Username</span>
+                            <span class="block text-sm text-gray-900 dark:text-white">{{ Auth::user()->firstname}} {{ Auth::user()->lastname}} </span>
                             <span
-                                class="block text-sm text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
+                                class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ Auth::user()->email }}</span>
                         </div>
                         <ul aria-labelledby="user-menu-button">
                             <li>
-                                <a href="{{ route('user.profile') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+                                @php
+                                    switch ($role) {
+                                        case 'admin':
+                                            $profileRoute = route('admin.profile');
+                                            break;
+                                        case 'donor':
+                                            $profileRoute = route('donor.profile');
+                                            break;
+                                        default:
+                                            $profileRoute = route('user.profile');
+                                            break;
+                                    }
+                                @endphp
+
+                            <a href="{{ $profileRoute }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                Profile
+                            </a>
                             </li>
                             <li>
-                                <a href="{{ route('loginpage') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Logout</a>
+                                <form action="{{ route('logout') }}" method="POST" > 
+                                    @csrf
+                                    <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Logout</button>
+                                </form>
+                                
                             </li>
                         </ul>
                     </div>
+                    @endauth
                 </div>
             </div>
         </nav>
