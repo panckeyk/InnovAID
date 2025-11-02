@@ -40,6 +40,11 @@ Route::get('/profile', function () {
     return view('user.userprofilepage');
 })->name('user.profile');
 
+Route::get('/signup', function () {
+    return view('signuppage');
+})->name('signup');
+
+
 
 
 
