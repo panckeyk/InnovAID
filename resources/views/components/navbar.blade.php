@@ -31,7 +31,7 @@
 
 <body>
     <header>
-        <nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-xl">
+        <nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-xl fixed top-0 z-50 w-full">
             <div class="max-w-7xl flex items-center justify-between mx-auto p-4">
 
                 <!-- 🔹 Left Section: Logo + Nav Links -->
@@ -164,6 +164,8 @@
                     </div>
                     @endauth
                 </div>
+
+               
             </div>
         </nav>
     </header>
@@ -268,6 +270,8 @@
     <main class="p-8">
         {{ $slot }}
     </main>
+
+   
 </body>
 
 </html>
