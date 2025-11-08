@@ -6,8 +6,6 @@ use App\Http\Requests\StoreCampaignRequest;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Auth;
 
-
-
 class CampaignController extends Controller
 {
     public function showCampaignPage(Campaign $campaign)
@@ -18,7 +16,7 @@ class CampaignController extends Controller
                               ->latest() 
                               ->take(5)
                               ->get();
-
+      
         $role = Auth::check() ? Auth::user()->role : null;
 
         $backRoute = match ($role) {
@@ -62,5 +60,6 @@ class CampaignController extends Controller
         ]);
 
         return redirect()->route('user.campaign')->with('success', 'Campaign submitted for approval!');
+        return view('components.campaignpage', compact('role', 'backRoute'));
     }
 }

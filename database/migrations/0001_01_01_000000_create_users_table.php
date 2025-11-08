@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+
        Schema::create('users', function (Blueprint $table) {
-            // CRITICAL FIX: Use UUID as the primary key
             $table->uuid('id')->primary();
-            
-            // Standard Auth fields
             $table->string('email')->unique();
             $table->string('password');
             $table->string('firstname', 25);
             $table->string('lastname', 25);
             $table->timestamp('email_verified_at')->nullable();
+            $table->enum('role', ['student', 'donor', 'admin'])->default('student'); // 👈 added
             $table->rememberToken();
             $table->timestamps();
-
-            // Application-Specific Fields
-            $table->enum('role', ['student', 'donor', 'admin'])->default('donor')->index();
             $table->string('avatar', 500)->nullable();
             
             // Fields specific to the 'student' role

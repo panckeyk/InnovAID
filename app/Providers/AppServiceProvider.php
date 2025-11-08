@@ -7,6 +7,9 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -37,6 +40,10 @@ class RouteServiceProvider extends ServiceProvider
             // Apply the 'web' middleware group to all routes defined in your web routes file
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+        // ✅ Share $role with all Blade views globally
+        View::composer('*', function ($view) {
+            $role = Auth::check() ? Auth::user()->role : null;
+            $view->with('role', $role);
         });
     }
 }
