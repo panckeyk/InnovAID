@@ -106,9 +106,9 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             placeholder="Enter password" required />
                         @if ($errors->any())
-                            @foreach ($errors->all() as $error)
-                                <p class="my-2 text-red-500"> {{ $error }}</p>
-                            @endforeach
+                                @foreach ($errors->all() as $error)
+                                    <p class="my-2 text-red-500"> {{ $error }}</p>
+                                @endforeach
                         @endif
                     </div>
                     <div class="mb-5">
@@ -118,9 +118,9 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             placeholder="Confirm password" required />
                         @if ($errors->any())
-                            @foreach ($errors->all() as $error)
-                                <p class="my-2 text-red-500"> {{ $error }}</p>
-                            @endforeach
+                                @foreach ($errors->all() as $error)
+                                    <p class="my-2 text-red-500"> {{ $error }}</p>
+                                @endforeach
                         @endif
                     </div>
 

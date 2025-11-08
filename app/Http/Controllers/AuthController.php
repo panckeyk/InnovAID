@@ -10,16 +10,49 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    // -------------------------------
+    // LOGIN PAGE
+    // -------------------------------
     public function showLogin()
     {
+        // Redirect if already logged in
+        if (Auth::check()) {
+            $role = Auth::user()->role;
+
+            return match ($role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'donor' => redirect()->route('donor.page'),
+                'student' => redirect()->route('user.page'),
+                default => redirect()->route('loginpage'),
+            };
+        }
+
         return view('auth.loginpage');
     }
 
+    // -------------------------------
+    // SIGNUP PAGE
+    // -------------------------------
     public function showSignup()
     {
+        // Redirect if already logged in
+        if (Auth::check()) {
+            $role = Auth::user()->role;
+
+            return match ($role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'donor' => redirect()->route('donor.page'),
+                'student' => redirect()->route('user.page'),
+                default => redirect()->route('loginpage'),
+            };
+        }
+
         return view('auth.signup');
     }
 
+    // -------------------------------
+    // LOGIN FUNCTION
+    // -------------------------------
     public function login(Request $request)
     {
         $validated = $request->validate([
@@ -38,11 +71,17 @@ class AuthController extends Controller
                 'student' => redirect()->route('user.page'),
                 default => redirect()->route('loginpage'),
             };
-           
         }
-            
+
+        // Invalid credentials
+        throw ValidationException::withMessages([
+            'email' => 'Invalid email or password.',
+        ]);
     }
 
+    // -------------------------------
+    // LOGOUT FUNCTION
+    // -------------------------------
     public function logout(Request $request)
     {
         Auth::logout();
@@ -53,6 +92,9 @@ class AuthController extends Controller
         return redirect()->route('loginpage');
     }
 
+    // -------------------------------
+    // REGISTER FUNCTION
+    // -------------------------------
     public function register(Request $request)
     {
         $validated = $request->validate([
