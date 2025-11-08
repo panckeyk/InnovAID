@@ -1,8 +1,6 @@
 @php
-use Illuminate\Support\Facades\Auth;
-
-// ✅ Define $role safely before anything else
-$role = Auth::check() ? Auth::user()->role : null;
+    use Illuminate\Support\Facades\Auth;
+    $role = Auth::check() ? Auth::user()->role : null;
 @endphp
 
 @props([
@@ -16,7 +14,9 @@ $role = Auth::check() ? Auth::user()->role : null;
     'isAdminProfile' => false,
     'isDonorProfile' => false,
     'isUserPage' => false,
+    'role' => null
 ])
+
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -103,8 +103,9 @@ $role = Auth::check() ? Auth::user()->role : null;
 
                 <!-- 🔹 Right Section -->
                 <div class="flex items-center space-x-3">
-                    <!-- 🔸 Create Campaign Button (for students only) -->
-                    @if ($role === 'student')
+
+                    <!-- 🔸 Create Campaign (only visible to non-admins) -->
+                    @if ($role === 'student' or $isUserPage or $isUserCampaign)
                         <div>
                             <button type="button"
                                 class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"

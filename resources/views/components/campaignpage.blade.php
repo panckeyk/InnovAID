@@ -1,4 +1,4 @@
-<x-navbar :isCampaignPage="true">
+<x-navbar :isCampaignPage="true" :role="$role">
     <script src="//unpkg.com/alpinejs" defer></script>
 
 

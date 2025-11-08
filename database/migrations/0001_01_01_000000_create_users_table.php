@@ -11,18 +11,34 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('firstname');
-            $table->string('lastname');
+
+       Schema::create('users', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('firstname', 25);
+            $table->string('lastname', 25);
+            $table->timestamp('email_verified_at')->nullable();
             $table->enum('role', ['student', 'donor', 'admin'])->default('student'); // 👈 added
             $table->rememberToken();
             $table->timestamps();
+            $table->string('avatar', 500)->nullable();
+            
+            // Fields specific to the 'student' role
+            $table->string('student_id', 50)->nullable()->index();
+            $table->string('department', 255)->nullable();
+            
+            // Status and Activity Fields
+            $table->boolean('verified')->default(false)->index(); // Should default to false for new signups
+            $table->dateTime('last_login')->nullable();
+            $table->boolean('is_active')->default(true);
+            
+            // Fields for password reset logic
+            $table->string('reset_password_token', 255)->nullable();
+            $table->dateTime('reset_password_expires')->nullable();
         });
 
+        // Retaining standard Laravel tables
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -31,7 +47,8 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            // IMPORTANT: If you keep this, ensure you update 'user_id' to foreignUuid
+            $table->foreignUuid('user_id')->nullable()->index(); 
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
