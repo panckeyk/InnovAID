@@ -22,7 +22,7 @@
                 <div class="w-full ml-5 mt-5 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
                     <!-- Header -->
                     <div class="flex items-center gap-5 mb-4">
-                        <button type="button" onclick="window.location='{{ route('loginpage') }}'"
+                        <button type="button" onclick="window.location='{{ route('login') }}'"
                             class="text-gray-900 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm p-2">
                             <x-icons.arrowlefticon />
                         </button>
@@ -138,7 +138,7 @@
                         <div class="flex justify-between p-2">
                             <h1>Already have an account?</h1>
                             <h1 class="text-blue-600 cursor-pointer"
-                                @click="window.location='{{ route('loginpage') }}'">
+                                @click="window.location='{{ route('login') }}'">
                                 Sign in</h1>
                         </div>
                     </div>

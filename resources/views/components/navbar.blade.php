@@ -98,8 +98,8 @@
                     @if ($role === 'student' or $isUserPage or $isUserCampaign)
                         <div>
                             <button type="button"
-                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
-                                onclick="window.location.href='{{ route('create.page') }}'">
+                                class="text-white bg-linear-to-br from-purple-600 to-blue-500 hover:bg-linear-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
+                                onclick="window.location.href='{{ route('user.createcampaign') }}'">
                                 <span class="text-white p-2.5 flex justify-between gap-4">
                                     <x-icons.plusicon />
                                     <h1>Create Campaign</h1>

@@ -1,12 +1,16 @@
 <x-navbar :isUserPage="true">
     <div class="flex justify-center mx-65">
         <div class="flex gap-20 flex-wrap">
-            <x-campaigncard/>
-            <x-campaigncard/>
-            <x-campaigncard/>
-            <x-campaigncard/>
-            <x-campaigncard/>
+            
+            {{-- FIX: Loop through the $campaigns collection and pass each item --}}
+            @forelse ($campaigns as $campaign)
+                <x-campaigncard :campaign="$campaign" />
+            @empty
+                <p class="text-gray-500 p-10">No active campaigns to show yet.</p>
+            @endforelse
+
+            
         </div>
 
-    </div>
+        </div>
 </x-navbar>
