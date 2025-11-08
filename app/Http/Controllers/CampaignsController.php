@@ -82,7 +82,7 @@ class CampaignsController extends Controller
             'category' => $validatedData['category'],
             'goal_amount' => $validatedData['goal_amount'],
             'deadline' => $validatedData['deadline'],
-            'status' => 'draft', // Start as draft until the student submits it for approval
+            'status' => 'pending', // Start as draft until the student submits it for approval
             'image' => $imagePath,
         ]);
 
@@ -98,25 +98,50 @@ class CampaignsController extends Controller
     public function show(Campaign $campaign)
     {
         $user = Auth::user();
+        $role = $user ? $user->role : 'donor'; // Default role for guests
+        $isCreator = $user && $campaign->creator_id === $user->id;
+        $isAdmin = ($role === 'admin');
+        $isAuthorized = $isCreator || $isAdmin; 
 
-        $isAuthorizedUser = $user
-            && ($campaign->creator_id === $user->id || $user->role === 'admin');
-
-        if (in_array($campaign->status, ['draft', 'pending', 'rejected']) && !$isAuthorizedUser) {
-
+        // 1. UNAUTHORIZED ACCESS CHECK
+        // If status is not public ('active', 'completed', 'approved') and user is neither
+        // the creator nor an admin, then abort.
+        if (in_array($campaign->status, ['draft', 'pending', 'rejected']) && !$isAuthorized) {
             abort(404, 'Campaign Not Found.');
         }
 
-        if ($campaign->creator_id === $user->id) {
-        return redirect()->route('campaigns.edit', $campaign);
-    }
+        // 2. CREATOR REDIRECT LOGIC (Keeping your original intent)
+        // If the user is the creator AND the campaign is in a non-public state (draft/pending/rejected), 
+        // redirect them to the edit page to work on it.
+        if ($isCreator && in_array($campaign->status, ['draft', 'pending', 'rejected'])) {
+            // Note: This maintains your original redirect logic.
+            return redirect()->route('campaigns.edit', $campaign); 
+        }
 
-        if (in_array($campaign->status, ['active', 'approved']) && !$isAuthorizedUser) {
+        // 3. EAGER LOADING DATA & SETTING DYNAMIC VARIABLES
+        
+        // Load the creator's details (name, avatar) and count completed donations
+        $campaign->load('creator'); 
+        // $campaign->loadCount(['donations' => function ($query) {
+        //     $query->where('payment_status', 'completed');
+        // }]);
+
+        // Determine the back button route
+       // $backRoute = $isAdmin ? route('admin.admindashboard') : route('discover');
+
+        // 4. INCREMENT VIEWS (Only for public view access)
+        // Increment views only if campaign is public AND the current user is NOT an authorized user (creator/admin)
+        if (in_array($campaign->status, ['active', 'approved']) && !$isAuthorized) {
             $campaign->increment('views');
         }
 
-        // Return the campaign view (public or private for authorized users)
-        return view('user.usercreatecampaignpage', compact('campaign'));
+        // 5. RETURN THE DYNAMIC VIEW
+        // The view receives the necessary variables to render the correct UI (Admin panel or Donor panel).
+        return view('components.campaignpage', [ // CRITICAL: Changed view to 'campaignpage'
+            'campaign' => $campaign,
+            'role' => $role, 
+            // 'backRoute' => $backRoute,
+        ]);
     }
 
     /**

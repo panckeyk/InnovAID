@@ -50,7 +50,7 @@
                                     <!-- 🔸 Admin Navigation -->
                                     <ul class="flex space-x-8 font-medium p-0 border-0 bg-transparent">
                                         <li>
-                                            <a href="{{ route('admin.page') }}" class="py-2 px-3 rounded-sm
+                                            <a href="{{ route('approved.index') }}" class="py-2 px-3 rounded-sm
                                                                                                 {{ request()->routeIs('admin.page')
                         ? 'text-blue-700 dark:text-blue-500'
                         : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}"
@@ -59,8 +59,8 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('admin.dashboard') }}" class="py-2 px-3 rounded-sm
-                                                                                                {{ request()->routeIs('admin.dashboard')
+                                            <a href="{{ route('admin.admindashboard') }}" class="py-2 px-3 rounded-sm
+                                                                                                {{ request()->routeIs('admin.admindashboard')
                         ? 'text-blue-700 dark:text-blue-500'
                         : 'text-gray-900 hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500' }}">
                                                 Admin Dashboard

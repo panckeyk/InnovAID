@@ -33,10 +33,10 @@ class AuthController extends Controller
             $user = Auth::user();
 
             return match ($user->role) {
-                'admin' => redirect()->route('admin.dashboard'),
+                'admin' => redirect()->route('admin.admindashboard'),
                 'donor' => redirect()->route('donor.page'),
                 'student' => redirect()->route('user.page'),
-                default => redirect()->route('loginpage'),
+                default => redirect()->route('login'),
             };
            
         }
@@ -50,7 +50,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('loginpage');
+        return redirect()->route('login');
     }
 
     public function register(Request $request)
@@ -74,10 +74,10 @@ class AuthController extends Controller
         Auth::login($user);
 
         return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
+            'admin' => redirect()->route('admin.admindashboard'),
             'donor' => redirect()->route('donor.page'),
             'student' => redirect()->route('user.page'),
-            default => redirect()->route('loginpage'),
+            default => redirect()->route('login'),
         };
     }
 }

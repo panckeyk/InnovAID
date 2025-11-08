@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('current_amount', 10, 2)->default(0.00);
             $table->dateTime('deadline')->index('idx_deadline');
             $table->enum('status', ['draft', 'pending', 'approved', 'active', 'completed', 'rejected', 'canceled'])->default('draft')->index('idx_status');
-            $table->string('image', 500);
+            $table->string('image', 500)->nullable();
             $table->boolean('featured')->default(false)->index('idx_featured');
             $table->integer('views')->default(0);
             $table->text('rejection_reason')->nullable();

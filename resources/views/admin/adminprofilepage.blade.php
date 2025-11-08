@@ -6,7 +6,7 @@
             <div class="flex flex-wrap gap-6 items-center">
                 
                 <!-- Profile Picture -->
-                <div class="flex-shrink-0 h-40 w-40 rounded-full overflow-hidden">
+                <div class="shrink-0 h-40 w-40 rounded-full overflow-hidden">
                     <img src="https://scontent.fmnl17-7.fna.fbcdn.net/v/t39.30808-1/564573792_122143664882803655_3207956134899640240_n.jpg?stp=c0.51.960.960a_dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeGzWJhcmSJ6gPup8gsVMdXsoWT97wJ5HCehZP3vAnkcJxmx1HtL88dkk7OUruufssUjQn9KQ8cE2N01JDpK7cGu&_nc_ohc=kZfLxW4IwXIQ7kNvwGYw6pP&_nc_oc=AdndWVkrw_v0U0SKn58m5NusYdKz11ZnwMuFh9ewSV4EiQIi5XqrwIJwN4zBxyvSibg&_nc_zt=24&_nc_ht=scontent.fmnl17-7.fna&_nc_gid=EVeFU3sAZf9CWOtV4soXqQ&oh=00_AfdwkYPylTSb_J8Z1EhWfkH4XrwXrpcMBJHheVPxcYH2hg&oe=690C4844"
                         alt="Profile Picture" class="h-full w-full object-cover object-center">
                 </div>

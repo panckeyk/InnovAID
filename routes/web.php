@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CampaignsController;
+use App\Http\Controllers\CampaignReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,9 +33,19 @@ Route::middleware('auth')->group(function () {
 
     // ---------- ADMIN ROUTES ----------
     Route::middleware('role:admin')->group(function () {
-        Route::get('/', fn() => view('admin.adminlayoutpage'))->name('admin.page');
-        Route::get('/dashboard', fn() => view('admin.admindashboard'))->name('admin.dashboard');
-        Route::get('/profile', fn() => view('admin.adminprofilepage'))->name('admin.profile');
+        // Dashboard & Profile (using your existing method names)
+        //Route::get('/', [AdminController::class, 'layout'])->name('admin.page');
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.admindashboard');
+        Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::post('/admin/campaigns/{campaign}/approve', [AdminController::class, 'approve'])->name('admin.campaigns.approve');
+        Route::post('/admin/campaigns/{campaign}/reject', [AdminController::class, 'reject'])->name('admin.campaigns.reject');
+        Route::get('/approved', [AdminController::class, 'layout'])->name('approved.index');
+        Route::get('/admin/campaigns/{id}', [AdminController::class, 'showCampaignDetails'])->name('admin.campaign.details');
+
+        // Campaign Review Routes
+        Route::get('/campaigns', [CampaignReviewController::class, 'index'])->name('admin.campaigns.index');
+        Route::get('/campaigns/{campaign}', [CampaignReviewController::class, 'show'])->name('admin.campaigns.show');
+
     });
 
     // ---------- DONOR ROUTES ----------
@@ -42,7 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', fn() => view('donor.donorlayoutpage'))->name('donor.page');
         Route::get('/profile', fn() => view('donor.donorprofilepage'))->name('donor.profile');
     });
-    
+
     // ------------------------------------------------------------------------
     // ---------- CAMPAIGN ROUTES (REVISED BLOCK FOR CRUD) --------------------
     // ------------------------------------------------------------------------
@@ -53,5 +64,4 @@ Route::middleware('auth')->group(function () {
         Route::resource('campaigns', CampaignsController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
         Route::get('/user/create-campaign', [CampaignsController::class, 'create'])->name('user.createcampaign');
     });
-
 });
