@@ -98,12 +98,11 @@
                     @if ($role === 'student' or $isUserPage or $isUserCampaign)
                         <div>
                             <button type="button"
-                                class="text-white bg-linear-to-br from-purple-600 to-blue-500 hover:bg-linear-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
                                 onclick="window.location.href='{{ route('user.createcampaign') }}'">
-                                <span class="text-white p-2.5 flex justify-between gap-4">
-                                    <x-icons.plusicon />
-                                    <h1>Create Campaign</h1>
-                                </span>
+                                <span class="text-white p-2.5 flex justify-between bg-gray-900 rounded-2xl gap-4 px-5 hover:bg-white hover:text-black font-semibold ">
+                                <x-icons.plusicon />
+                                <h1>Create Campaign</h1>
+                            </span>
                             </button>
                         </div>
                     @endif
@@ -115,9 +114,14 @@
                         id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                         data-dropdown-placement="bottom">
 
-                        <img class="w-8 h-8 rounded-full"
-                            src=""
-                            alt="user photo">
+                        <div
+                            class=" bg-green-200 flex items-center justify-center text-sm font-semibold
+                            text-green-800 px-5 py-3 rounded-full">
+                            <div>
+                                 {{ strtoupper(substr(Auth::user()->firstname, 0, 1)) }}
+                            </div>                           
+                        </div>
+                        <!-- lagay naten here yung image na papasok sa creation ng user -->
 
                         <span class="ml-5">{{ Auth::user()->firstname}} {{ Auth::user()->lastname}}</span>
                     </button>
@@ -134,17 +138,23 @@
                         <ul aria-labelledby="user-menu-button">
                             <li>
                                 @php
-                                    switch ($role) {
-                                        case 'admin':
-                                            $profileRoute = route('admin.profile');
-                                            break;
-                                        case 'donor':
-                                            $profileRoute = route('donor.profile');
-                                            break;
-                                        default:
-                                            $profileRoute = route('user.profile');
-                                            break;
-                                    }
+                                    try {
+                                            switch ($role) {
+                                                case 'admin':
+                                                    $profileRoute = route('admin.profile');
+                                                    break;
+                                                case 'donor':
+                                                    $profileRoute = route('donor.profile');
+                                                    break;
+                                                default:
+                                                    $profileRoute = route('user.profile');
+                                                    break;
+                                            }
+                                        } catch (\Exception $e) {
+                                            // Fallback if route doesn't exist
+    $profileRoute = '#';
+    \Log::error('Profile route error: ' . $e->getMessage());
+                                        }
                                 @endphp
 
                             <a href="{{ $profileRoute }}"
@@ -171,7 +181,7 @@
     </header>
 
     @unless ($isAdminDashboard or $isUserCampaign or $isCampaignPage or $isCreatePage or $isUserProfile or $isAdminProfile or $isDonorProfile)
-        <div class="text-center mt-15">
+        <div class="text-center mt-35">
             <h1 class="text-3xl font-bold">Discover Projects</h1>
             <h1 class="text-xl text-gray-600 mt-2">
                 Support innovative student projects and make an impact

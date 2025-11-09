@@ -11,9 +11,9 @@
     $filter = $filter ?? ['status' => 'pending'];
 @endphp
 
-<x-navbar :role="$role">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+<x-navbar :role="$role" :isAdminDashboard="true">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-20 lg:px-8 py-10">
+        <h1 class="text-3xl text-center font-bold text-gray-900 mb-8">Admin Dashboard</h1>
 
         {{-- 1. Stats Overview --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -120,7 +120,7 @@
 
             {{-- Pagination (Placeholder) --}}
             <div class="p-4 border-t border-gray-200">
-                <p class="text-sm text-gray-500 text-center">Pagination Placeholder</p>
+                <!-- <p class="text-sm text-gray-500 text-center">Pagination Placeholder</p> -->
             </div>
         </div>
     </div>

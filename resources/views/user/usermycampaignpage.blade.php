@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <div class="flex justify-center mt-5">
+    <!-- <div class="flex justify-center mt-5">
         <button type="button"
             class="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             onclick="window.location.href='{{ route('user.createcampaign') }}'">
@@ -21,6 +21,13 @@
                 <h1>Create Campaign</h1>
             </span>
         </button>
+    </div> -->
+
+    <div class="text-center mt-27">
+            <h1 class="text-3xl font-bold">My Campaigns </h1>
+            <h1 class="text-xl text-gray-600 mt-2">
+                View All of your created campaigns
+            </h1>
     </div>
 
 
@@ -58,10 +65,10 @@
             </a>
 
             {{-- DRAFT Button --}}
-            <a href="{{ route('user.campaign', ['status' => 'draft']) }}"
+            <!-- <a href="{{ route('user.campaign', ['status' => 'draft']) }}"
                 class="px-4 py-2 text-sm font-medium border-t border-b border-gray-900 focus:z-10 focus:ring-2 focus:ring-gray-500 {{ $statusClass('draft', $filterStatus ?? 'all') }}">
                 Draft ({{ Auth::user()->campaigns->where('status', 'draft')->count() }})
-            </a>
+            </a> -->
 
             {{-- COMPLETED Button (Maps to 'completed' or 'canceled') --}}
             <a href="{{ route('user.campaign', ['status' => 'completed']) }}"

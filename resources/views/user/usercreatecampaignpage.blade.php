@@ -8,7 +8,7 @@
             @method('PUT')
         @endif
 
-        <div class="mx-65">
+        <div class="mx-65 mt-25">
             <div>
                 {{-- Back button --}}
                 <button type="button"
