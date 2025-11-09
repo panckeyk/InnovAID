@@ -7,7 +7,7 @@ use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CampaignsController;
 use App\Http\Controllers\CampaignReviewController;
-
+use App\Http\Controllers\DonationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,13 +45,14 @@ Route::middleware('auth')->group(function () {
         // Campaign Review Routes
         Route::get('/campaigns', [CampaignReviewController::class, 'index'])->name('admin.campaigns.index');
         Route::get('/campaigns/{campaign}', [CampaignReviewController::class, 'show'])->name('admin.campaigns.show');
-
     });
 
     // ---------- DONOR ROUTES ----------
-    Route::prefix('donor')->group(function () {
-        Route::get('/', fn() => view('donor.donorlayoutpage'))->name('donor.page');
-        Route::get('/profile', fn() => view('donor.donorprofilepage'))->name('donor.profile');
+    Route::middleware('role:donor')->group(function () {
+        Route::get('/', [DonorController::class, 'index'])->name('donor.page');
+        Route::get('/profile', [DonorController::class, 'profile'])->name('donor.profile');
+        Route::get('/campaigns/{campaign}/donate', [DonorController::class, 'create'])->name('donor.create');
+        Route::post('/campaigns/{campaign}/donate', [DonorController::class, 'store'])->name('donor.store');
     });
 
     // ------------------------------------------------------------------------

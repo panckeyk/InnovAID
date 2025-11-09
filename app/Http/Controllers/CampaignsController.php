@@ -30,9 +30,9 @@ class CampaignsController extends Controller
             $statusesMap = [
                 'active' => ['active', 'approved'],
                 'pending' => ['pending'],
-                'draft' => ['draft'],
                 'rejected' => ['rejected'],
-                'completed' => ['completed', 'canceled'],
+                'completed' => ['completed'],
+                'canceled' => ['canceled'],
             ];
 
             if (isset($statusesMap[$filterStatus])) {
@@ -75,7 +75,7 @@ class CampaignsController extends Controller
 
         // 3. Database Insertion
         $campaign = Campaign::create([
-           // 'id' => Str::uuid(), // Assuming you use UUIDs as per your migration
+            // 'id' => Str::uuid(), // Assuming you use UUIDs as per your migration
             'creator_id' => Auth::id(),
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
@@ -98,50 +98,64 @@ class CampaignsController extends Controller
     public function show(Campaign $campaign)
     {
         $user = Auth::user();
-        $role = $user ? $user->role : 'donor'; // Default role for guests
+        // Use 'guest' for unauthenticated users for clearer logic flow.
+        $role = $user ? $user->role : 'guest';
+
         $isCreator = $user && $campaign->creator_id === $user->id;
         $isAdmin = ($role === 'admin');
-        $isAuthorized = $isCreator || $isAdmin; 
+        $isAuthorized = $isCreator || $isAdmin;
+        $isDonor = ($role === 'donor');
+        $isDonorOrGuest = $isDonor || ($role === 'guest');
 
-        // 1. UNAUTHORIZED ACCESS CHECK
-        // If status is not public ('active', 'completed', 'approved') and user is neither
-        // the creator nor an admin, then abort.
+  
         if (in_array($campaign->status, ['draft', 'pending', 'rejected']) && !$isAuthorized) {
             abort(404, 'Campaign Not Found.');
         }
 
-        // 2. CREATOR REDIRECT LOGIC (Keeping your original intent)
-        // If the user is the creator AND the campaign is in a non-public state (draft/pending/rejected), 
-        // redirect them to the edit page to work on it.
         if ($isCreator && in_array($campaign->status, ['draft', 'pending', 'rejected'])) {
-            // Note: This maintains your original redirect logic.
-            return redirect()->route('campaigns.edit', $campaign); 
+            return redirect()->route('campaigns.edit', $campaign);
         }
 
-        // 3. EAGER LOADING DATA & SETTING DYNAMIC VARIABLES
+        $campaign->load('creator');
+
+        $campaign->loadCount(['donations' => function ($query) {
+            $query->where('payment_status', 'completed');
+        }])->loadSum(['donations' => function ($query) {
+            $query->where('payment_status', 'completed');
+        }], 'amount');
+
+        $campaign->load(['donations' => function ($query) {
+            $query->where('payment_status', 'completed')->with('donor')->orderByDesc('created_at')->take(5);
+        }]);
+
+        if ($isAdmin) {
+            $backRoute = route('admin.admindashboard');
+        } elseif ($isDonorOrGuest) {
+            $backRoute = route('donor.page');
+        } else {
         
-        // Load the creator's details (name, avatar) and count completed donations
-        $campaign->load('creator'); 
-        // $campaign->loadCount(['donations' => function ($query) {
-        //     $query->where('payment_status', 'completed');
-        // }]);
-
-        // Determine the back button route
-       // $backRoute = $isAdmin ? route('admin.admindashboard') : route('discover');
-
-        // 4. INCREMENT VIEWS (Only for public view access)
-        // Increment views only if campaign is public AND the current user is NOT an authorized user (creator/admin)
-        if (in_array($campaign->status, ['active', 'approved']) && !$isAuthorized) {
-            $campaign->increment('views');
+            $backRoute = '/';
         }
 
-        // 5. RETURN THE DYNAMIC VIEW
-        // The view receives the necessary variables to render the correct UI (Admin panel or Donor panel).
-        return view('components.campaignpage', [ // CRITICAL: Changed view to 'campaignpage'
-            'campaign' => $campaign,
-            'role' => $role, 
-            // 'backRoute' => $backRoute,
-        ]);
+        if (in_array($campaign->status, ['active', 'approved', 'completed']) && $isDonorOrGuest) {
+
+            $campaign->increment('views');
+
+            return view('donor.donorcampaignview', [ // <-- RENDERS THE DONOR VIEW!
+                'campaign' => $campaign,
+                'role' => $role,
+                'backRoute' => $backRoute,
+            ]);
+        }
+
+        if ($isAuthorized) {
+            return view('components.campaignpage', [ // <-- ORIGINAL ADMIN/CREATOR VIEW
+                'campaign' => $campaign,
+                'role' => $role,
+                'backRoute' => $backRoute,
+            ]);
+        }
+        abort(404);
     }
 
     /**
@@ -234,7 +248,7 @@ class CampaignsController extends Controller
     private function getBackRoute(?string $role): string
     {
         return match ($role) {
-            'admin' => route('admin.page'),
+            'admin' => route('approved.index'),
             'donor' => route('donor.page'),
             'student', 'user' => route('user.page'),
             default => route('login'),

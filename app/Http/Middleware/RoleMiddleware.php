@@ -18,7 +18,7 @@ class RoleMiddleware
     {
         if (!Auth::check()) {
 
-            return redirect()->route('loginpage');
+            return redirect()->route('login');
         }
 
 
@@ -29,6 +29,7 @@ class RoleMiddleware
             return $next($request);
         }
 
-        abort(403, 'Unauthorized access. Your role (' . $user->role . ') is not permitted to view this resource.');
+        $userRole = $user->role ?? 'guest';
+        abort(403, 'Unauthorized access. Your role (' . $userRole . ') is not permitted to view this resource.');
     }
 }

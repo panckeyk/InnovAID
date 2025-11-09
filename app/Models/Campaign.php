@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Campaign extends Model
 {
     use HasFactory, HasUuid;
-    
+
     protected $keyType = 'string'; // Tell Laravel the primary key is a string
     public $incrementing = false;
     // The attributes that are mass assignable.
@@ -57,7 +57,7 @@ class Campaign extends Model
             }
         });
     }
-    
+
     //-------------------------------------------------------------
     // Relationships
     //-------------------------------------------------------------
@@ -73,10 +73,10 @@ class Campaign extends Model
     /**
      * A Campaign can have many Donations.
      */
-    // public function donations(): HasMany
-    // {
-    //     return $this->hasMany(Donation::class);
-    // }
+    public function donations(): HasMany
+    {
+        return $this->hasMany(Donation::class);
+    }
 
     /**
      * The User who approved this campaign (Admin).
@@ -104,9 +104,20 @@ class Campaign extends Model
     protected function progress(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->goal_amount > 0 
-                ? round(($this->current_amount / $this->goal_amount) * 100, 2) 
+            get: fn() => $this->goal_amount > 0
+                ? round(($this->current_amount / $this->goal_amount) * 100, 2)
                 : 0,
         );
+    }
+
+
+    public function hasReachedGoal()
+    {
+        return $this->current_amount >= $this->goal_amount;
+    }
+
+    public function canAcceptDonations()
+    {
+        return $this->status === 'active' && !$this->hasReachedGoal();
     }
 }

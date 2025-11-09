@@ -81,4 +81,9 @@ class User extends Authenticatable
     {
         return 'string';
     }
+    public function donations(): HasMany
+    {
+        // Explicitly set the foreign key to match the column in the donations table
+        return $this->hasMany(Donation::class, 'donor_id');
+    }
 }
