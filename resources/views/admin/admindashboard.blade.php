@@ -60,6 +60,7 @@
                             <option value="active" {{ $filter['status'] === 'active' ? 'selected' : '' }}>Active Campaigns</option>
                             <option value="approved" {{ $filter['status'] === 'approved' ? 'selected' : '' }}>Approved Campaigns</option>
                             <option value="rejected" {{ $filter['status'] === 'rejected' ? 'selected' : '' }}>Rejected Campaigns</option>
+                            <option value="completed" {{ $filter['status'] === 'completed' ? 'selected' : '' }}>Completed Campaigns</option>
                             <option value="all" {{ $filter['status'] === 'all' ? 'selected' : '' }}>All Campaigns</option>
                         </select>
                         <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900">Filter</button>
@@ -110,11 +111,23 @@
                                     ${{ number_format($campaign->current_amount, 0) }} / ${{ number_format($campaign->goal_amount, 0) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {{-- Link to the campaign page for review/details --}}
-                                    <a href="{{ route('campaigns.show', $campaign->id) }}" 
-                                        class="font-semibold {{ $campaign->status === 'pending' ? 'text-red-600 hover:text-red-900' : 'text-indigo-600 hover:text-indigo-900' }}">
-                                        {{ $campaign->status === 'pending' ? 'Review Campaign' : 'View Details' }}
-                                    </a>
+                                    {{-- Link to proper page: pending -> admin review, others -> public details --}}
+                                    @if ($campaign->status === 'pending')
+                                        <a href="{{ route('admin.campaigns.show', $campaign) }}"
+                                           class="font-semibold text-red-600 hover:text-red-900">
+                                            Review Campaign
+                                        </a>
+                                    @elseif ($campaign->status === 'completed')
+                                        <a href="{{ route('admin.campaign.details', $campaign->id) }}"
+                                           class="font-semibold text-indigo-600 hover:text-indigo-900">
+                                            View Details
+                                        </a>
+                                    @else
+                                        <a href="{{ route('campaigns.show', $campaign) }}"
+                                           class="font-semibold text-indigo-600 hover:text-indigo-900">
+                                            View Details
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

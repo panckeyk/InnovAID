@@ -1,4 +1,4 @@
-{{-- <x-navbar :isCampaignDetails="true" :role="$role"> 
+<x-navbar :isCampaignDetails="true" :role="$role"> 
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <div class="">
@@ -74,13 +74,6 @@
                             Description
                         </button>
 
-                        <button @click="view = 'updates'"
-                            :class="view === 'updates'
-                                ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border-t border-b border-gray-900'
-                                : 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white'">
-                            Updates
-                        </button>
-
                         <button @click="view = 'comments'"
                             :class="view === 'comments'
                                 ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-e-lg'
@@ -108,22 +101,53 @@
                     <!-- Comments Tab -->
                     <div x-show="view === 'comments'"
                         class="block p-6 bg-white border border-gray-200 rounded-lg mt-5">
-                        <form>
-                            <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
-                                <div class="px-4 py-2 bg-white rounded-t-lg">
-                                    <label for="comment" class="sr-only">Your comment</label>
-                                    <textarea id="comment" rows="4"
-                                        class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:ring-0 dark:text-white"
-                                        placeholder="Write a comment..." required></textarea>
+
+                        {{-- Comments List (always visible) --}}
+                        <div class="space-y-4 mb-6">
+                            @forelse(($campaign->comments ?? collect()) as $comment)
+                                <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        @if($comment->user?->avatar)
+                                            <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="w-9 h-9 rounded-full object-cover" alt="User Avatar">
+                                        @else
+                                            <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+                                                {{ strtoupper(substr($comment->user?->firstname ?? 'U', 0, 1)) }}
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <div class="text-sm font-semibold">{{ $comment->user?->firstname }} {{ $comment->user?->lastname }}</div>
+                                            <div class="text-xs text-gray-500">{{ $comment->created_at?->diffForHumans() }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-gray-800 text-sm">{{ $comment->content }}</div>
                                 </div>
-                                <div class="flex items-center justify-between px-3 py-2 border-t border-gray-200">
-                                    <button type="submit"
-                                        class="inline-flex items-center py-2.5 px-4 font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
-                                        Post comment
-                                    </button>
+                            @empty
+                                <p class="text-gray-500 text-sm">No comments yet.</p>
+                            @endforelse
+                        </div>
+
+                        {{-- Post form (hidden for admin) --}}
+                        @if ($role !== 'admin')
+                            <form method="POST" action="{{ route('campaigns.comments.store', $campaign) }}">
+                                @csrf
+                                <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
+                                    <div class="px-4 py-2 bg-white rounded-t-lg">
+                                        <label for="comment" class="sr-only">Your comment</label>
+                                        <textarea id="comment" name="content" rows="3" maxlength="1000" required
+                                            class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:ring-0"
+                                            placeholder="Write a comment..."></textarea>
+                                    </div>
+                                    <div class="flex items-center justify-end px-3 py-2 border-t border-gray-200">
+                                        <button type="submit"
+                                            class="inline-flex items-center py-2.5 px-4 font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
+                                            Post comment
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        @else
+                            <p class="text-xs text-gray-500">Admins can view comments but cannot post.</p>
+                        @endif
                     </div>
 
                 </div>
@@ -170,15 +194,27 @@
                         </div>
 
                         <!-- Duration -->
+                        @php
+                            $deadlineDate = $campaign->deadline instanceof \Carbon\Carbon
+                                ? $campaign->deadline
+                                : \Carbon\Carbon::parse($campaign->deadline);
+                            $daysLeft = (int) now()->diffInDays($deadlineDate, false);
+                        @endphp
                         <div class="border-t mt-5 border-gray-300">
                             <div class="flex items-center gap-2 mt-3">
                                 <div><x-icons.clockicon /></div>
                                 <div>
                                     <h1 class="text-xl">
-                                        {{ \Carbon\Carbon::parse($campaign->end_date)->diffInDays(now()) }} Days Left
+                                        @if ($daysLeft < 0)
+                                            Expired
+                                        @elseif ($daysLeft === 0)
+                                            Last Day
+                                        @else
+                                            {{ $daysLeft }} {{ $daysLeft === 1 ? 'Day' : 'Days' }} Left
+                                        @endif
                                     </h1>
                                     <h1 class="text-gray-500">
-                                        Started {{ \Carbon\Carbon::parse($campaign->start_date)->format('M d, Y') }}
+                                        Deadline {{ $deadlineDate->format('M d, Y') }}
                                     </h1>
                                 </div>
                             </div>
@@ -206,15 +242,15 @@
                             @else
                                 @foreach ($campaign->donations->take(5) as $donation)
                                     <div class="flex items-center gap-3 border-b border-gray-300 pb-3 mb-3">
-                                        <img src="{{ $donation->user->profile_picture 
-                                                    ? asset('storage/' . $donation->user->profile_picture)
-                                                    : 'https://via.placeholder.com/50' }}" 
+                                        <img src="{{ $donation->donor?->avatar 
+                                                    ? asset('storage/' . $donation->donor->avatar)
+                                                    : asset('Images/default-avatar.png') }}" 
                                             alt="Backer Avatar" 
                                             class="w-10 h-10 rounded-full object-cover">
 
                                         <div class="flex flex-col leading-tight">
                                             <span class="text-md font-semibold text-gray-900">
-                                                {{ $donation->user->name ?? 'Anonymous' }}
+                                                {{ $donation->anonymous ? 'Anonymous Donor' : ($donation->donor?->firstname . ' ' . $donation->donor?->lastname) ?? 'Anonymous' }}
                                             </span>
                                             <span class="text-sm text-gray-500">
                                                 ${{ number_format($donation->amount, 2) }}
@@ -229,12 +265,14 @@
             </div>
         </div>
     </div>
-</x-navbar> --}}
+</x-navbar>
 
 
-<x-navbar :isCampaignDetails="true" :role="$role"> 
-    <script src="//unpkg.com/alpinejs" defer></script>
 
+{{-- <x-navbar :isCampaignDetails="true" :role="$role"> 
+    <script src="//unpkg.com/alpinejs" defer></script> --}}
+
+{{--
     <div>
         <div>
             <button type="button"
@@ -308,13 +346,6 @@
                             Description
                         </button>
 
-                        <button @click="view = 'updates'"
-                            :class="view === 'updates'
-                                ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border-t border-b border-gray-900'
-                                : 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white'">
-                            Updates
-                        </button>
-
                         <button @click="view = 'comments'"
                             :class="view === 'comments'
                                 ? 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-e-lg'
@@ -342,64 +373,62 @@
                     <!-- Comments Tab -->
                     <div x-show="view === 'comments'"
                         class="block p-6 bg-white border border-gray-200 rounded-lg mt-5">
-                        <form>
-                            <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
-                                <div class="px-4 py-2 bg-white rounded-t-lg">
-                                    <label for="comment" class="sr-only">Your comment</label>
-                                    <textarea id="comment" rows="4"
-                                        class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:ring-0 dark:text-white"
-                                        placeholder="Write a comment..." required></textarea>
+
+                        {{-- Comments List (always visible) --}}
+                        <div class="space-y-4 mb-6">
+                            @forelse(($campaign->comments ?? collect()) as $comment)
+                                <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        @if($comment->user?->avatar)
+                                            <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="w-9 h-9 rounded-full object-cover" alt="User Avatar">
+                                        @else
+                                            <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+                                                {{ strtoupper(substr($comment->user?->firstname ?? 'U', 0, 1)) }}
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <div class="text-sm font-semibold">{{ $comment->user?->firstname }} {{ $comment->user?->lastname }}</div>
+                                            <div class="text-xs text-gray-500">{{ $comment->created_at?->diffForHumans() }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-gray-800 text-sm">{{ $comment->content }}</div>
                                 </div>
-                                <div class="flex items-center justify-between px-3 py-2 border-t border-gray-200">
-                                    <button type="submit"
-                                        class="inline-flex items-center py-2.5 px-4 font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
-                                        Post comment
-                                    </button>
+                            @empty
+                                <p class="text-gray-500 text-sm">No comments yet.</p>
+                            @endforelse
+                        </div>
+
+                        {{-- Post form (hidden for admin) --}}
+                        @if ($role !== 'admin')
+                            <form method="POST" action="{{ route('campaigns.comments.store', $campaign) }}">
+                                @csrf
+                                <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
+                                    <div class="px-4 py-2 bg-white rounded-t-lg">
+                                        <label for="comment2" class="sr-only">Your comment</label>
+                                        <textarea id="comment2" name="content" rows="3" maxlength="1000" required
+                                            class="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:ring-0"
+                                            placeholder="Write a comment..."></textarea>
+                                    </div>
+                                    <div class="flex items-center justify-end px-3 py-2 border-t border-gray-200">
+                                        <button type="submit"
+                                            class="inline-flex items-center py-2.5 px-4 font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
+                                            Post comment
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        @else
+                        @endif
                     </div>
 
                 </div>
             </div>
 
-            <!-- Right Side -->
-            <div class="w-1/2">
-                <div class="flex-col justify-center">
-                    <!-- Funding Card -->
-                    <div class="w-full ml-5 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
-                        <h5 class="mb-2 text-2xl flex font-bold tracking-tight text-gray-900 dark:text-white">
-                            Target: ${{ number_format($campaign->goal_amount ?? 0, 2) }}
-                        </h5>
 
-                        <!-- Duration -->
-                        <div class="border-t mt-5 border-gray-300">
-                            <div class="flex items-center gap-2 mt-3">
-                                <div><x-icons.clockicon /></div>
-                                <div>
-                                    <h1 class="text-xl">
-                                        {{ \Carbon\Carbon::parse($campaign->end_date)->diffInDays(now()) }} Days Left
-                                    </h1>
-                                    <h1 class="text-gray-500">
-                                        Started {{ \Carbon\Carbon::parse($campaign->start_date)->format('M d, Y') }}
-                                    </h1>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Placeholder for future donation button -->
-                        <div class="mt-5">
-                            <button type="button"
-                                class="flex justify-center items-center gap-2 w-full text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5">
-                                <span><x-icons.haticon /></span>
-                                Donations not available yet
-                            </button>
-                        </div>
-                    </div>
 
                     <!-- Removed: Recent Backers section -->
                 </div>
             </div>
         </div>
     </div>
-</x-navbar>
+

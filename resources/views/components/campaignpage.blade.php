@@ -3,7 +3,7 @@
     $goalAmount = $campaign->goal_amount ?? 1;
     $progressPercent = $goalAmount > 0 ? round(($fundedAmount / $goalAmount) * 100) : 0;
     $backersCount = 0;
-    $daysLeft = now()->diffInDays($campaign->deadline, false);
+    $daysLeft = (int) now()->diffInDays($campaign->deadline, false);
     $categoryClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
 @endphp
 
@@ -80,10 +80,6 @@
                         <button onclick="showTab('description')" id="desc-btn"
                             class="px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-s-lg">
                             Description
-                        </button>
-                        <button onclick="showTab('updates')" id="updates-btn"
-                            class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white">
-                            Updates
                         </button>
                         <button onclick="showTab('comments')" id="comments-btn"
                             class="px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white">
@@ -202,11 +198,49 @@
                                 </div>
                             </div>
 
-                            <div class="mt-5">
-                                <button type="button" class="flex justify-center items-center gap-2 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                                    <span>🎓</span>
-                                    Back this Project
-                                </button>
+                            {{-- Comments Section --}}
+                            <div class="mt-8 border-t border-gray-200 pt-6">
+                                <h2 class="text-2xl font-semibold mb-4">Comments</h2>
+
+                                @auth
+                                    <form method="POST" action="{{ route('campaigns.comments.store', $campaign) }}" class="mb-6">
+                                        @csrf
+                                        <textarea name="content" rows="3" maxlength="1000" required
+                                                  class="w-full border border-gray-300 rounded-lg p-3 focus:ring-blue-500 focus:border-blue-500"
+                                                  placeholder="Write a comment..."></textarea>
+                                        @error('content')
+                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                        <div class="mt-2 flex justify-end">
+                                            <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900">Post Comment</button>
+                                        </div>
+                                    </form>
+                                @else
+                                    <p class="text-gray-500 mb-4">Please log in to post a comment.</p>
+                                @endauth
+
+                                <div class="space-y-4">
+                                    @forelse ($campaign->comments as $comment)
+                                        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                @if($comment->user?->avatar)
+                                                    <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="w-10 h-10 rounded-full object-cover" alt="User Avatar">
+                                                @else
+                                                    <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                                                        {{ strtoupper(substr($comment->user?->firstname ?? 'U', 0, 1)) }}
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <div class="text-sm font-semibold">{{ $comment->user?->firstname }} {{ $comment->user?->lastname }}</div>
+                                                    <div class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 text-gray-800">{{ $comment->content }}</div>
+                                        </div>
+                                    @empty
+                                        <p class="text-gray-500">No comments yet.</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
 
@@ -304,21 +338,20 @@
             function showTab(tabName) {
                 // Hide all tabs
                 document.getElementById('description-tab').classList.add('hidden');
-                document.getElementById('updates-tab').classList.add('hidden');
+                const updatesTab = document.getElementById('updates-tab');
+                if (updatesTab) updatesTab.classList.add('hidden');
                 document.getElementById('comments-tab').classList.add('hidden');
                 
                 // Reset all buttons
                 document.getElementById('desc-btn').className = 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white';
-                document.getElementById('updates-btn').className = 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white';
+                const updatesBtn = document.getElementById('updates-btn');
+                if (updatesBtn) updatesBtn.className = 'hidden';
                 document.getElementById('comments-btn').className = 'px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white';
                 
                 // Show selected tab and highlight button
                 if (tabName === 'description') {
                     document.getElementById('description-tab').classList.remove('hidden');
                     document.getElementById('desc-btn').className = 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-s-lg';
-                } else if (tabName === 'updates') {
-                    document.getElementById('updates-tab').classList.remove('hidden');
-                    document.getElementById('updates-btn').className = 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border-t border-b border-gray-900';
                 } else if (tabName === 'comments') {
                     document.getElementById('comments-tab').classList.remove('hidden');
                     document.getElementById('comments-btn').className = 'px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-e-lg';

@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CampaignsController;
 use App\Http\Controllers\Admin\CampaignReviewController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AdminUserController;
 /*
 |--------------------------------------------------------------------------
@@ -85,3 +86,4 @@ Route::middleware('auth')->group(function () {
 // ---------- PUBLIC CAMPAIGN ROUTE (Allow guests to view campaigns) ----------
 // This route must be AFTER authenticated routes to avoid conflicts
 Route::get('/campaigns/{campaign}', [CampaignsController::class, 'show'])->name('campaigns.show');
+Route::post('/campaigns/{campaign}/comments', [CommentController::class, 'store'])->middleware('auth')->name('campaigns.comments.store');

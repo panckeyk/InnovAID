@@ -130,7 +130,7 @@
                             $percentage = $goalAmount > 0 ? round(($raisedAmount / $goalAmount) * 100) : 0;
                             $deadlineDate = \Carbon\Carbon::parse($campaign->deadline);
                             $now = \Carbon\Carbon::now();
-                            $daysLeft = $now->diffInDays($deadlineDate, false);
+                            $daysLeft = (int) $now->diffInDays($deadlineDate, false);
                             $isExpired = $deadlineDate->isPast();
                             $canDonate = !$isExpired && $campaign->status === 'active' && $campaign->current_amount < $campaign->goal_amount;
                         @endphp
@@ -204,7 +204,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full mt-5">
+    <div class="w-full mt-5">
                         <div class="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
                             <div class="mb-5 text-xl font-semibold text-gray-900">
                                 <h1>Recent Backers</h1>
@@ -217,14 +217,14 @@
                                 @foreach ($campaign->donations->sortByDesc('created_at')->take(5) as $donation)
                                     <div
                                         class="flex items-center gap-3 border-b border-gray-200 pb-3 mb-3 last:border-b-0 last:mb-0 last:pb-0">
-                                        <img src="{{ $donation->user?->profile_picture
-                                            ? asset('storage/' . $donation->user->profile_picture)
-                                            : 'https://via.placeholder.com/50' }}"
+                                        <img src="{{ $donation->donor?->avatar
+                                            ? asset('storage/' . $donation->donor->avatar)
+                                            : asset('Images/default-avatar.png') }}"
                                             alt="Backer Avatar" class="w-10 h-10 rounded-full object-cover">
 
                                         <div class="flex flex-col leading-tight">
                                             <span class="text-md font-semibold text-gray-900">
-                                                {{ $donation->anonymous ? 'Anonymous Donor' : $donation->user->name ?? 'Deleted User' }}
+                                                {{ $donation->anonymous ? 'Anonymous Donor' : ($donation->donor?->firstname . ' ' . $donation->donor?->lastname) ?? 'Deleted User' }}
                                             </span>
                                             <span class="text-sm text-gray-500">
                                                 Donated ${{ number_format($donation->amount, 2) }}
@@ -236,6 +236,55 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Comments Section --}}
+    <div class="w-full mt-5">
+        <div class="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="mb-5 text-xl font-semibold text-gray-900">
+                <h1>Comments</h1>
+            </div>
+
+            @auth
+                <form method="POST" action="{{ route('campaigns.comments.store', $campaign) }}" class="mb-6">
+                    @csrf
+                    <textarea name="content" rows="3" maxlength="1000" required
+                              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Write a comment..."></textarea>
+                    @error('content')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <div class="mt-2 flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900">Post Comment</button>
+                    </div>
+                </form>
+            @else
+                <p class="text-gray-500 mb-4">Please log in to post a comment.</p>
+            @endauth
+
+            <div class="space-y-4">
+                @forelse ($campaign->comments as $comment)
+                    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="flex items-center gap-3">
+                            @if($comment->user?->avatar)
+                                <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="w-10 h-10 rounded-full object-cover" alt="User Avatar">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                                    {{ strtoupper(substr($comment->user?->firstname ?? 'U', 0, 1)) }}
+                                </div>
+                            @endif
+                            <div>
+                                <div class="text-sm font-semibold">{{ $comment->user?->firstname }} {{ $comment->user?->lastname }}</div>
+                                <div class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-gray-800">{{ $comment->content }}</div>
+                    </div>
+                @empty
+                    <p class="text-gray-500">No comments yet.</p>
+                @endforelse
             </div>
         </div>
     </div>

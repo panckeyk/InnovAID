@@ -11,7 +11,7 @@
     // Use diffInDays with absolute flag to get positive days, then check if deadline has passed
     $deadlineDate = \Carbon\Carbon::parse($campaign->deadline);
     $now = \Carbon\Carbon::now();
-    $daysLeft = $now->diffInDays($deadlineDate, false);
+    $daysLeft = (int) $now->diffInDays($deadlineDate, false);
     $isExpired = $deadlineDate->isPast();
     
     // Determine status for the badge (using your colors)

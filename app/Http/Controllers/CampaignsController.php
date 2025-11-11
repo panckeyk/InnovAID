@@ -129,6 +129,9 @@ class CampaignsController extends Controller
         $campaign->load(['donations' => function ($query) {
             $query->where('payment_status', 'completed')->with('donor')->orderByDesc('created_at')->take(5);
         }]);
+        $campaign->load(['comments' => function ($query) {
+            $query->with('user')->orderByDesc('created_at');
+        }]);
 
         if ($isAdmin) {
             $backRoute = route('admin.admindashboard');

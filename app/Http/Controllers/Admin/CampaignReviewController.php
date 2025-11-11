@@ -42,8 +42,14 @@ class CampaignReviewController extends Controller
     public function show(Campaign $campaign)
     {
         $campaign->load(['creator', 'donations']);
+        $role = 'admin';
+        $backRoute = route('admin.admindashboard');
 
-        return view('components.campaignpage', compact('campaign'));
+        return view('components.campaignpage', [
+            'campaign' => $campaign,
+            'role' => $role,
+            'backRoute' => $backRoute,
+        ]);
     }
 
     /**
