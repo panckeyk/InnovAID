@@ -1,6 +1,6 @@
 <x-navbar :isUserPage="true">
     <div class="flex justify-center mx-65">
-        <div class="flex gap-20 flex-wrap">
+        <div class="flex gap-10 flex-wrap">
             
             {{-- FIX: Loop through the $campaigns collection and pass each item --}}
             @forelse ($campaigns as $campaign)

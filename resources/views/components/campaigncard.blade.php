@@ -23,7 +23,7 @@
 
 
 <div
-    class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm 
+    class="w-[20rem] bg-white border border-gray-200 rounded-lg shadow-sm 
             dark:bg-gray-800 dark:border-gray-700 overflow-hidden 
             transform transition duration-100 ease-in-out 
             hover:scale-105 hover:shadow-2xl hover:border-blue-300" 

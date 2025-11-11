@@ -23,7 +23,7 @@
         </button>
     </div> -->
 
-    <div class="text-center mt-27">
+    <div class="text-center mt-8">
             <h1 class="text-3xl font-bold">My Campaigns </h1>
             <h1 class="text-xl text-gray-600 mt-2">
                 View All of your created campaigns

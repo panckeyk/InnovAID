@@ -7,6 +7,7 @@
     'isAdmin' => false,
     'isAdminDashboard' => false,
     'isDonor' => false,
+    'isCampaignDetails' => false,
     'isUserCampaign' => false,
     'isCampaignPage' => false,
     'isCreatePage' => false,
@@ -111,9 +112,9 @@
                     @if ($role === 'student' or $isUserPage or $isUserCampaign)
                         <div>
                             <button type="button"
-                                class="text-white bg-blue-100 hover:bg-linear-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl"
+                                class="text-white bg-gray-900 rounded-2xl px-2 hover:bg-white hover:text-gray-900"
                                 onclick="window.location.href='{{ route('user.createcampaign') }}'">
-                                <span class="text-white p-2.5 flex justify-between gap-4">
+                                <span class="p-2.5 flex justify-between gap-4">
                                     <x-icons.plusicon />
                                     <h1>Create Campaign</h1>
                                 </span>
@@ -126,9 +127,15 @@
                         <button type="button"
                             class="flex items-center p-3 text-sm rounded-xl hover:bg-gray-100 dark:focus:ring-gray-600"
                             id="user-menu-button" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                            <img class="w-8 h-8 rounded-full object-cover"
+                            <div class="rounded-full w-8 h-8 bg-blue-600 flex justify-center items-center font-semibold text-white">
+                                <div>
+                                     {{ strtoupper(substr(Auth::user()->firstname, 0, 1)) }}
+                                </div>    
+                            </div>
+
+                            <!-- <img class="w-8 h-8 rounded-full object-cover"
                                 src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('Images/default-avatar.png') }}"
-                                alt="user photo">
+                                alt="user photo"> -->
                             <span class="ml-5">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
                         </button>
 
@@ -193,7 +200,8 @@
             $isCreatePage ||
             $isUserProfile ||
             $isAdminProfile ||
-            $isDonorProfile)
+            $isDonorProfile ||
+            $isCampaignDetails)
         <div class="text-center mt-15">
             <h1 class="text-3xl font-bold">Discover Projects</h1>
             <h1 class="text-xl text-gray-600 mt-2">

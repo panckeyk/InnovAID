@@ -1,5 +1,5 @@
 <x-navbar :isUserProfile="true">
-    <div class="max-w-6xl mt-25 mx-auto px-6">
+    <div class="max-w-6xl mt-5 mx-auto px-6">
         @if (session('success'))
             <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
                 <span class="font-medium">Success!</span> {{ session('success') }}
@@ -72,7 +72,7 @@
                             <div class="mb-4">
                                 <label for="avatar" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
                                 <input type="file" id="avatar" name="avatar" accept="image/*"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 rounded-full file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     onchange="previewAvatar(this)">
                                 <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WEBP (Max 5MB)</p>
                                 <img id="avatar-preview" class="mt-2 h-24 w-24 rounded-full object-cover border-2 border-gray-300 {{ Auth::user()->avatar ? '' : 'hidden' }}"
@@ -137,7 +137,14 @@
                                     class="text-white bg-gray-800 hover:bg-gray-900 rounded-lg text-sm px-5 py-2.5">Save</button>
                                 <button type="button" @click="view = 'information'"
                                     class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">Cancel</button>
+                                <button type="button" data-modal-target="password-modal"
+                                    data-modal-toggle="password-modal"
+                                    class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">
+                                    Change Password
+                                </button>
                             </div>
+
+                            
                         </form>
                     </div>
 
@@ -151,13 +158,13 @@
 
                             <!-- BOTTOM -->
                             <!-- Change Password Button -->
-                            <div class="mt-5">
+                            <!-- <div class="mt-5">
                                 <button type="button" data-modal-target="password-modal"
                                     data-modal-toggle="password-modal"
                                     class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">
                                     Change Password
                                 </button>
-                            </div>
+                            </div> -->
 
                             <!-- Change Password Modal -->
                             <div id="password-modal" tabindex="-1" aria-hidden="true"

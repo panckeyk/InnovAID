@@ -1,12 +1,12 @@
 <x-navbar :role="$role" :isAdminDashboard="true">
+
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="mb-6">
-            <a href="{{ route('admin.users.index') }}"
-                class="text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-4">
-                <x-icons.arrowlefticon /> Back to Admin Management
-            </a>
-            <h1 class="text-3xl font-bold text-gray-900">Create New Admin Account</h1>
-            <p class="text-gray-600 mt-2">Add a new administrator to the system</p>
+         <div>
+            <button type="button"
+                class="text-gray-900 flex mb-5 gap-4 text-center justify-center items-center focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                onclick="window.location.href='{{ route('admin.users.index') }}'">
+                <x-icons.arrowlefticon /> Back to Account Management
+            </button>
         </div>
 
         @if ($errors->any())
@@ -35,7 +35,7 @@
                         </div>
                         <div class="flex-1">
                             <input type="file" id="avatar" name="avatar" accept="image/*"
-                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2  file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 rounded-full"
                                 onchange="previewAvatar(this)">
                             <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WEBP (Max 5MB)</p>
                         </div>

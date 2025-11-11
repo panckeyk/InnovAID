@@ -1,5 +1,13 @@
 <x-navbar :role="$role" :isAdminDashboard="true">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div>
+            <button type="button"
+                class="text-gray-900 flex mb-5 gap-4 text-center justify-center items-center focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                onclick="window.location.href='{{ route('admin.admindashboard') }}'">
+                <x-icons.arrowlefticon /> Back to Discover
+            </button>
+        </div>
+
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900">Admin Account Management</h1>
             <a href="{{ route('admin.users.create') }}"
