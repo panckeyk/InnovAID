@@ -15,6 +15,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-20 lg:px-8 py-10">
         <h1 class="text-3xl text-center font-bold text-gray-900 mb-8">Admin Dashboard</h1>
 
+        {{-- Quick Actions --}}
+        <div class="mb-6 flex gap-4">
+            <a href="{{ route('admin.users.index') }}"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium">
+                Manage Admins
+            </a>
+        </div>
+
         {{-- 1. Stats Overview --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             

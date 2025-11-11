@@ -15,7 +15,7 @@
             <div class="w-2/3">
                 <div class="bg-white border border-gray-200 shadow-sm h-[400px] rounded-lg overflow-hidden">
                     <img class="w-full h-full object-cover"
-                        src="{{ $campaign->image_path ? asset('storage/' . $campaign->image_path) : asset('Images/LogoInnovAid.png') }}"
+                        src="{{ $campaign->image ? asset('storage/' . $campaign->image) : asset('Images/LogoInnovAid.png') }}"
                         alt="Campaign Image">
                 </div>
 
@@ -35,17 +35,21 @@
 
                         <div class="mt-5">
                             <div class="flex items-center gap-3">
-                                <img src="{{ $campaign->creator->profile_picture
-                                    ? asset('storage/' . $campaign->creator->profile_picture)
-                                    : 'https://via.placeholder.com/150' }}"
-                                    alt="Creator Avatar" class="w-14 h-14 rounded-full object-cover">
+                                @if($campaign->creator->avatar)
+                                    <img src="{{ asset('storage/' . $campaign->creator->avatar) }}"
+                                        alt="Creator Avatar" class="w-14 h-14 rounded-full object-cover">
+                                @else
+                                    <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xl">
+                                        {{ strtoupper(substr($campaign->creator->firstname ?? 'U', 0, 1)) }}
+                                    </div>
+                                @endif
 
                                 <div class="flex flex-col leading-tight">
                                     <span class="text-lg font-semibold text-gray-900">
-                                        {{ $campaign->creator->name ?? 'Anonymous' }}
+                                        {{ $campaign->creator->firstname }} {{ $campaign->creator->lastname }}
                                     </span>
                                     <span class="text-md text-gray-500">
-                                        {{ $campaign->creator->role ?? 'Creator' }}
+                                        {{ $campaign->creator->department ?? ucfirst($campaign->creator->role ?? 'Creator') }}
                                     </span>
                                 </div>
                             </div>
@@ -124,7 +128,11 @@
                             $goalAmount = $campaign->goal_amount ?? 0;
                             $backersCount = $campaign->donations_count ?? 0;
                             $percentage = $goalAmount > 0 ? round(($raisedAmount / $goalAmount) * 100) : 0;
-                            $daysLeft = \Carbon\Carbon::parse($campaign->deadline)->diffInDays(now());
+                            $deadlineDate = \Carbon\Carbon::parse($campaign->deadline);
+                            $now = \Carbon\Carbon::now();
+                            $daysLeft = $now->diffInDays($deadlineDate, false);
+                            $isExpired = $deadlineDate->isPast();
+                            $canDonate = !$isExpired && $campaign->status === 'active' && $campaign->current_amount < $campaign->goal_amount;
                         @endphp
 
                         <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900">
@@ -151,13 +159,34 @@
 
                                 <div class="w-1/3">
                                     <div class="mb-1 text-sm font-medium text-gray-500">Days Left</div>
-                                    <span class="text-lg font-bold">{{ $daysLeft }}</span>
+                                    <span class="text-lg font-bold">
+                                        @if ($isExpired || $daysLeft < 0)
+                                            Expired
+                                        @elseif ($daysLeft == 0)
+                                            Last Day
+                                        @else
+                                            {{ $daysLeft }}
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-5 pt-5 border-t border-gray-200">
-                            @if (Auth::check() && Auth::user()->role === 'donor')
+                            @if ($isExpired || !$canDonate)
+                                {{-- Campaign expired or cannot accept donations --}}
+                                <button type="button" disabled
+                                    class="flex justify-center items-center gap-2 w-full text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-lg px-5 py-3">
+                                    <span><x-icons.haticon /></span>
+                                    @if ($isExpired)
+                                        Campaign Has Expired
+                                    @elseif ($campaign->current_amount >= $campaign->goal_amount)
+                                        Funding Goal Reached
+                                    @else
+                                        Donations Not Available
+                                    @endif
+                                </button>
+                            @elseif (Auth::check() && Auth::user()->role === 'donor')
                                 {{-- Donor route for donation form --}}
                                 <a href="{{ route('donor.create', $campaign) }}"
                                     class="flex justify-center items-center gap-2 w-full text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-3 transition duration-150 ease-in-out">

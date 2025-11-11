@@ -9,6 +9,7 @@ use App\Models\Donation;   // CRITICAL: New model import for total funds
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth; // CRITICAL: New import for approve/reject actions
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -38,7 +39,7 @@ class AdminController extends Controller
         //     $query->where('payment_status', 'completed');
         // }])->findOrFail($id);
 
-         $campaign = Campaign::with('creator')->findOrFail($id);
+        $campaign = Campaign::with('creator')->findOrFail($id);
 
         $backRoute = route('approved.index'); // go back to layout page
 
@@ -150,7 +151,59 @@ class AdminController extends Controller
     // The rest of your existing methods...
     public function profile()
     {
-        return view('admin.adminprofilepage');
+        $admin = Auth::user();
+
+        // Get campaign statistics
+        $totalCampaigns = Campaign::count();
+        $pendingCampaigns = Campaign::where('status', 'pending')->count();
+        $activeCampaigns = Campaign::whereIn('status', ['active', 'approved'])->count();
+        $totalUsers = \App\Models\User::count();
+
+        // Get recent admin actions (assuming you have an AdminAction model)
+        // If you don't have this model yet, just use an empty collection
+        $recentActions = collect([]); // Empty for now
+
+        // If you have an AdminAction model:
+        // $recentActions = \App\Models\AdminAction::where('admin_id', $admin->id)
+        //     ->with('campaign')
+        //     ->orderBy('created_at', 'desc')
+        //     ->take(10)
+        //     ->get();
+
+        return view('admin.adminprofilepage', compact(
+            'totalCampaigns',
+            'pendingCampaigns',
+            'activeCampaigns',
+            'totalUsers',
+            'recentActions'
+        ));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'firstname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'lastname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ], [
+            'firstname.regex' => 'First name should only contain letters and spaces.',
+            'lastname.regex' => 'Last name should only contain letters and spaces.',
+        ]);
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if (Auth::user()->avatar && Storage::disk('public')->exists(Auth::user()->avatar)) {
+                Storage::disk('public')->delete(Auth::user()->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        Auth::user()->update($validated);
+
+        return redirect()->route('admin.profile')
+            ->with('success', 'Profile updated successfully!');
     }
 
     public function index()

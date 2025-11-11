@@ -83,7 +83,13 @@
         <div class="flex gap-10 flex-wrap mt-8 justify-center">
 
             @forelse ($campaigns as $campaign)
-                <a href="{{ route('campaigns.edit', $campaign->id) }}"
+                @php
+                    // Link to view if campaign is active/approved/completed, otherwise link to edit
+                    $campaignUrl = in_array($campaign->status, ['active', 'approved', 'completed']) 
+                        ? route('campaigns.show', $campaign) 
+                        : route('campaigns.edit', $campaign);
+                @endphp
+                <a href="{{ $campaignUrl }}"
                     class="block hover:opacity-90 transition-opacity">
                     <x-campaigncard :campaign="$campaign" />
                 </a>

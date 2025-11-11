@@ -16,7 +16,7 @@
                 <!-- Campaign Image -->
                 <div class="bg-white border border-gray-200 shadow-sm h-100 rounded-lg">
                     <img class="w-full h-full object-cover" 
-                        src="{{ $campaign->image_path ? asset('storage/' . $campaign->image_path) : asset('Images/LogoInnovAid.png') }}" 
+                        src="{{ $campaign->image ? asset('storage/' . $campaign->image) : asset('Images/LogoInnovAid.png') }}" 
                         alt="Campaign Image">
                 </div>
 
@@ -39,18 +39,22 @@
                         <!-- Creator -->
                         <div>
                             <div class="flex items-center gap-3">
-                                <img src="{{ $campaign->creator->profile_picture 
-                                            ? asset('storage/' . $campaign->creator->profile_picture)
-                                            : 'https://via.placeholder.com/150' }}" 
-                                    alt="Creator Avatar" 
-                                    class="w-14 h-14 rounded-full object-cover">
+                                @if($campaign->creator->avatar)
+                                    <img src="{{ asset('storage/' . $campaign->creator->avatar) }}" 
+                                        alt="Creator Avatar" 
+                                        class="w-14 h-14 rounded-full object-cover">
+                                @else
+                                    <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xl">
+                                        {{ strtoupper(substr($campaign->creator->firstname ?? 'U', 0, 1)) }}
+                                    </div>
+                                @endif
 
                                 <div class="flex flex-col leading-tight">
                                     <span class="text-lg font-semibold text-gray-900">
-                                        {{ $campaign->creator->name ?? 'Anonymous' }}
+                                        {{ $campaign->creator->firstname }} {{ $campaign->creator->lastname }}
                                     </span>
                                     <span class="text-md text-gray-500">
-                                        {{ $campaign->creator->role ?? 'Creator' }}
+                                        {{ $campaign->creator->department ?? ucfirst($campaign->creator->role ?? 'Creator') }}
                                     </span>
                                 </div>
                             </div>
@@ -246,7 +250,7 @@
                 <!-- Campaign Image -->
                 <div class="bg-white border border-gray-200 shadow-sm h-100 rounded-lg">
                     <img class="w-full h-full object-cover" 
-                        src="{{ $campaign->image_path ? asset('storage/' . $campaign->image_path) : asset('Images/LogoInnovAid.png') }}" 
+                        src="{{ $campaign->image ? asset('storage/' . $campaign->image) : asset('Images/LogoInnovAid.png') }}" 
                         alt="Campaign Image">
                 </div>
 
@@ -269,18 +273,22 @@
                         <!-- Creator -->
                         <div>
                             <div class="flex items-center gap-3">
-                                <img src="{{ $campaign->creator->profile_picture 
-                                            ? asset('storage/' . $campaign->creator->profile_picture)
-                                            : 'https://via.placeholder.com/150' }}" 
-                                    alt="Creator Avatar" 
-                                    class="w-14 h-14 rounded-full object-cover">
+                                @if($campaign->creator->avatar)
+                                    <img src="{{ asset('storage/' . $campaign->creator->avatar) }}" 
+                                        alt="Creator Avatar" 
+                                        class="w-14 h-14 rounded-full object-cover">
+                                @else
+                                    <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xl">
+                                        {{ strtoupper(substr($campaign->creator->firstname ?? 'U', 0, 1)) }}
+                                    </div>
+                                @endif
 
                                 <div class="flex flex-col leading-tight">
                                     <span class="text-lg font-semibold text-gray-900">
-                                        {{ $campaign->creator->name ?? 'Anonymous' }}
+                                        {{ $campaign->creator->firstname }} {{ $campaign->creator->lastname }}
                                     </span>
                                     <span class="text-md text-gray-500">
-                                        {{ $campaign->creator->role ?? 'Creator' }}
+                                        {{ $campaign->creator->department ?? ucfirst($campaign->creator->role ?? 'Creator') }}
                                     </span>
                                 </div>
                             </div>

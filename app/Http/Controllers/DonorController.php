@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log; // Added for better error logging
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DonorController extends Controller
@@ -34,9 +35,59 @@ class DonorController extends Controller
      */
     public function profile()
     {
-        return view('donor.donorprofilepage');
+        $donor = Auth::user();
+
+        // Get donation statistics
+        $donations = Donation::where('donor_id', $donor->id)
+            ->where('payment_status', 'completed')
+            ->with('campaign')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $totalDonations = $donations->total();
+        $totalAmountDonated = Donation::where('donor_id', $donor->id)
+            ->where('payment_status', 'completed')
+            ->sum('amount');
+
+        $totalCampaignsBacked = Donation::where('donor_id', $donor->id)
+            ->where('payment_status', 'completed')
+            ->distinct('campaign_id')
+            ->count('campaign_id');
+
+        return view('donor.donorprofilepage', compact(
+            'donations',
+            'totalDonations',
+            'totalAmountDonated',
+            'totalCampaignsBacked'
+        ));
     }
 
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'firstname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'lastname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ], [
+            'firstname.regex' => 'First name should only contain letters and spaces.',
+            'lastname.regex' => 'Last name should only contain letters and spaces.',
+        ]);
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if (Auth::user()->avatar && Storage::disk('public')->exists(Auth::user()->avatar)) {
+                Storage::disk('public')->delete(Auth::user()->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        Auth::user()->update($validated);
+
+        return redirect()->route('donor.profile')
+            ->with('success', 'Profile updated successfully!');
+    }
     // --- DONATION FLOW METHODS ---
 
     /**

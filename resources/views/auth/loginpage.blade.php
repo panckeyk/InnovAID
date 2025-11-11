@@ -30,11 +30,16 @@
                         Email Address
                     </label>
 
-                    <input type="email" id="email-address-icon" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Email@example.com">
+                    <input type="email" id="email-address-icon" name="email" 
+                        value="{{ old('email') }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('email') border-red-500 @enderror" 
+                        placeholder="Email@example.com" 
+                        required 
+                        autocomplete="email"
+                        maxlength="255">
 
                     @error('email')
-                        <p class="text-red-500 text-xs">{{ $message }}</p>
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -44,13 +49,26 @@
                         Enter Password
                     </label>
 
-                    <input type="password" id="password-icon" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Password">
+                    <input type="password" id="password-icon" name="password" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('password') border-red-500 @enderror" 
+                        placeholder="Password" 
+                        required 
+                        minlength="8"
+                        autocomplete="current-password">
 
                     @error('password')
-                        <p class="text-red-500 text-xs">{{ $message }}</p>
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- General Error Messages -->
+                @if ($errors->any())
+                    <div class="mt-4 p-3 text-sm text-red-800 rounded-lg bg-red-50">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
 
 
                 <!-- Signup Redirect -->

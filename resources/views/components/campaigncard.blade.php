@@ -8,7 +8,11 @@
     $progressPercent = ($goalAmount > 0) ? round(($fundedAmount / $goalAmount) * 100) : 0;
     
     // Calculate days left using Carbon (Laravel's default date library)
-    $daysLeft = now()->diffInDays($campaign->deadline, false);
+    // Use diffInDays with absolute flag to get positive days, then check if deadline has passed
+    $deadlineDate = \Carbon\Carbon::parse($campaign->deadline);
+    $now = \Carbon\Carbon::now();
+    $daysLeft = $now->diffInDays($deadlineDate, false);
+    $isExpired = $deadlineDate->isPast();
     
     // Determine status for the badge (using your colors)
     $categoryClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'; // Default category color
@@ -30,7 +34,7 @@
     <div class="h-40 w-full">
         {{-- Use asset('storage/...') for image path (assuming local storage is linked) --}}
         <img class="w-full h-full object-cover" 
-             src="{{ asset('storage/' . $campaign->image) }}" 
+             src="{{ $campaign->image ? asset('storage/' . $campaign->image) : asset('Images/LogoInnovAid.png') }}" 
              alt="{{ $campaign->title }}">
     </div>
 
@@ -48,13 +52,19 @@
         <div class="mt-5">
             <div class="flex items-center gap-3">
                 
-                <img src="{{ asset($creator->avatar ?? 'Images/default_avatar.png') }}"
-                    alt="Creator Avatar" class="w-10 h-10 rounded-full object-cover">
+                @if($creator->avatar)
+                    <img src="{{ asset('storage/' . $creator->avatar) }}"
+                        alt="Creator Avatar" class="w-10 h-10 rounded-full object-cover">
+                @else
+                    <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                        {{ strtoupper(substr($creator->firstname ?? 'U', 0, 1)) }}
+                    </div>
+                @endif
 
                 <div class="flex flex-col leading-tight">
-                    <span class="font-semibold text-gray-900">{{ $creator->name }}</span>
+                    <span class="font-semibold text-gray-900">{{ $creator->firstname }} {{ $creator->lastname }}</span>
                     {{-- Assuming creator role is 'student', display their department if available --}}
-                    <span class="text-sm text-gray-500">{{ $creator->department ?? 'Student' }}</span> 
+                    <span class="text-sm text-gray-500">{{ $creator->department ?? ucfirst($creator->role ?? 'Student') }}</span>
                 </div>
             </div>
         </div>
@@ -82,12 +92,12 @@
                 <div class="flex items-center gap-1">
                     <x-icons.calendaricon class="w-5 h-5 text-blue-700 dark:text-white" />
                     {{-- DYNAMIC: Days Left (Handle expired campaigns) --}}
-                    @if ($daysLeft > 0)
-                        <span class="text-sm font-medium opacity-60 dark:text-white">{{ $daysLeft }} days left</span>
+                    @if ($isExpired || $daysLeft < 0)
+                        <span class="text-sm font-medium text-red-500">Expired</span>
                     @elseif ($daysLeft == 0)
                         <span class="text-sm font-medium text-red-500">Last day!</span>
                     @else
-                        <span class="text-sm font-medium opacity-60 dark:text-white">Completed</span>
+                        <span class="text-sm font-medium opacity-60 dark:text-white">{{ $daysLeft }} {{ $daysLeft == 1 ? 'day' : 'days' }} left</span>
                     @endif
                 </div>
             </div>

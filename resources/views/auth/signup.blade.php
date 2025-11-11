@@ -54,12 +54,10 @@
                     class="block px-4 py-2 hover:bg-gray-100">Student</a></li>
                 <li><a href="#" @click.prevent="selectedRole = 'Donor'; open = false"
                     class="block px-4 py-2 hover:bg-gray-100">Donor</a></li>
-                <li><a href="#" @click.prevent="selectedRole = 'Admin'; open = false"
-                    class="block px-4 py-2 hover:bg-gray-100">Admin</a></li>
               </ul>
             </div>
 
-            <input type="hidden" name="role" :value="selectedRole">
+            <input type="hidden" name="role" :value="selectedRole" required>
 
             <div class="ml-1 mt-2">
               <template x-if="selectedRole === 'Student'">
@@ -69,10 +67,13 @@
                 <h5 class="text-sm text-gray-500">Donors can donate to campaigns but cannot create one
                 </h5>
               </template>
-              <template x-if="selectedRole === 'Admin'">
-                <h5 class="text-sm text-gray-500">Admins manage both students and donors</h5>
+              <template x-if="selectedRole === 'Who\'s account are you creating this for'">
+                <h5 class="text-sm text-red-500">Please select an account type</h5>
               </template>
             </div>
+            @error('role')
+              <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+            @enderror
           </div>
 
           <!-- Signup Fields -->
@@ -81,15 +82,31 @@
               <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First
                 name</label>
               <input type="text" id="first_name" name="firstname"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                placeholder="John" required />
+                value="{{ old('firstname') }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('firstname') border-red-500 @enderror"
+                placeholder="John" 
+                required 
+                maxlength="35"
+                pattern="[A-Za-z\s]+"
+                title="First name should only contain letters and spaces" />
+              @error('firstname')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
             </div>
             <div>
               <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last
                 name</label>
               <input type="text" id="last_name" name="lastname"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                placeholder="Doe" required />
+                value="{{ old('lastname') }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('lastname') border-red-500 @enderror"
+                placeholder="Doe" 
+                required 
+                maxlength="35"
+                pattern="[A-Za-z\s]+"
+                title="Last name should only contain letters and spaces" />
+              @error('lastname')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
             </div>
           </div>
 
@@ -97,31 +114,38 @@
           <div class="mb-5">
             <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
             <input type="email" id="email" name="email"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="sample@student.edu.com" required />
+              value="{{ old('email') }}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('email') border-red-500 @enderror"
+              placeholder="sample@student.edu.com" 
+              required 
+              maxlength="255"
+              autocomplete="email" />
+            @error('email')
+              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
           </div>
           <div class="mb-5">
             <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
             <input type="password" id="password" name="password"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Enter password" required />
-            @if ($errors->any())
-              @foreach ($errors->all() as $error)
-                <p class="my-2 text-red-500"> {{ $error }}</p>
-              @endforeach
-            @endif
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('password') border-red-500 @enderror"
+              placeholder="Enter password" 
+              required 
+              minlength="8"
+              autocomplete="new-password" />
+            @error('password')
+              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+            <p class="mt-1 text-xs text-gray-500">Password must be at least 8 characters long</p>
           </div>
           <div class="mb-5">
             <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900">Confirm
               Password</label>
             <input type="password" id="confirm-password" name="password_confirmation"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Confirm password" required />
-            @if ($errors->any())
-              @foreach ($errors->all() as $error)
-                <p class="my-2 text-red-500"> {{ $error }}</p>
-              @endforeach
-            @endif
+              placeholder="Confirm password" 
+              required 
+              minlength="8"
+              autocomplete="new-password" />
           </div>
 
           <!-- Create Account Button -->

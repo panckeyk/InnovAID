@@ -49,8 +49,10 @@
                         Project Title
                     </label>
                     <input type="text" id="title" name="title" placeholder="Input Title"
-                        value="{{ old('title', $campaign->title ?? '') }}" required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        value="{{ old('title', $campaign->title ?? '') }}" 
+                        required
+                        maxlength="255"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('title') border-red-500 @enderror dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     @error('title')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
@@ -60,7 +62,7 @@
                     <label for="category"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                     <select id="category" name="category" required
-                        class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-4 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-4 py-2.5 @error('category') border-red-500 @enderror dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" disabled
                             {{ old('category', $campaign->category ?? '') == '' ? 'selected' : '' }}>Select a category
                         </option>
@@ -81,9 +83,12 @@
                         Funding Goal ($)
                     </label>
                     <input type="number" id="goal_amount" name="goal_amount" placeholder="e.g., 500.00"
-                        value="{{ old('goal_amount', $campaign->goal_amount ?? '') }}" required min="100"
+                        value="{{ old('goal_amount', $campaign->goal_amount ?? '') }}" 
+                        required 
+                        min="100"
                         step="0.01"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        max="999999999.99"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('goal_amount') border-red-500 @enderror dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     @error('goal_amount')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
@@ -96,7 +101,8 @@
                     <input type="date" id="deadline" name="deadline"
                         value="{{ old('deadline', isset($campaign) ? \Carbon\Carbon::parse($campaign->deadline)->format('Y-m-d') : '') }}"
                         required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        min="{{ isset($campaign) ? '' : \Carbon\Carbon::tomorrow()->format('Y-m-d') }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('deadline') border-red-500 @enderror dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     @error('deadline')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
@@ -107,8 +113,11 @@
                         Description
                     </label>
                     <textarea id="description" name="description" rows="4" required
-                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        minlength="10"
+                        maxlength="5000"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Write your thoughts here...">{{ old('description', $campaign->description ?? '') }}</textarea>
+                    <p class="mt-1 text-xs text-gray-500">Description must be at least 10 characters long</p>
                     @error('description')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror

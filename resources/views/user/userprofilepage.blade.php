@@ -1,5 +1,21 @@
 <x-navbar :isUserProfile="true">
     <div class="max-w-6xl mt-25 mx-auto px-6">
+        @if (session('success'))
+            <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
+                <span class="font-medium">Success!</span> {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                <span class="font-medium">Please correct the following errors:</span>
+                <ul class="mt-1.5 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <!-- Profile Section -->
         <div class="mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -7,26 +23,24 @@
 
 
                 <!-- Profile Picture -->
-                <div class="relative flex-shrink-0 h-40 w-40 rounded-full overflow-hidden border cursor-pointer group">
-                    @if(Auth::user()->photo)
+                <div class="relative shrink-0 h-40 w-40 rounded-full overflow-hidden border-2 border-gray-300 cursor-pointer group">
+                    @if(Auth::user()->avatar)
                         <!-- Uploaded profile picture -->
-                        <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="Profile Picture"
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile Picture"
                             class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105">
                     @else
                         <!-- First letter fallback -->
                         <div
-                            class="h-full w-full flex items-center justify-center bg-green-200 font-semibold text-green-800 text-4xl transition-transform duration-300 group-hover:scale-105">
-                            {{ strtoupper(substr(Auth::user()->firstname ?? '', 0, 1)) }}
+                            class="h-full w-full flex items-center justify-center bg-blue-600 font-semibold text-white text-5xl transition-transform duration-300 group-hover:scale-105">
+                            {{ strtoupper(substr(Auth::user()->firstname ?? 'U', 0, 1)) }}
                         </div>
                     @endif
 
                     <!-- Hover Overlay -->
                     <div
-                        class="absolute inset-0 bg-black bg-opacity-10 opacity-0 group-hover:opacity-20 flex items-center justify-center text-white font-semibold text-sm transition-opacity duration-300">
-                        Change
+                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center text-white font-semibold text-sm transition-opacity duration-300">
+                        <span class="opacity-0 group-hover:opacity-100">Change</span>
                     </div>
-
-
                 </div>
 
                 <!-- Profile Information -->
@@ -50,36 +64,79 @@
 
                     <!-- Edit Information Form -->
                     <div x-show="view === 'EditInformation'" class="flex-1">
-                        <form>
+                        <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            
+                            <!-- Avatar Upload -->
+                            <div class="mb-4">
+                                <label for="avatar" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
+                                <input type="file" id="avatar" name="avatar" accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                    onchange="previewAvatar(this)">
+                                <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WEBP (Max 5MB)</p>
+                                <img id="avatar-preview" class="mt-2 h-24 w-24 rounded-full object-cover border-2 border-gray-300 {{ Auth::user()->avatar ? '' : 'hidden' }}"
+                                    src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : '' }}" alt="Avatar preview">
+                                @error('avatar')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
                             <div class="grid gap-6 mb-6 md:grid-cols-2">
                                 <div>
-                                    <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First
+                                    <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">First
                                         name</label>
-                                    <input type="text" id="first_name" placeholder="John"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" />
+                                    <input type="text" id="firstname" name="firstname" value="{{ Auth::user()->firstname }}"
+                                        required maxlength="35" pattern="[A-Za-z\s]+"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 @error('firstname') border-red-500 @enderror" />
+                                    @error('firstname')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
-                                    <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last
+                                    <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">Last
                                         name</label>
-                                    <input type="text" id="last_name" placeholder="Doe"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" />
+                                    <input type="text" id="lastname" name="lastname" value="{{ Auth::user()->lastname }}"
+                                        required maxlength="35" pattern="[A-Za-z\s]+"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 @error('lastname') border-red-500 @enderror" />
+                                    @error('lastname')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
                                     <label for="student_id" class="block mb-2 text-sm font-medium text-gray-900">Student
                                         ID</label>
-                                    <input type="text" id="student_id" placeholder="STU2023-N"
+                                    <input type="text" id="student_id" name="student_id" value="{{ Auth::user()->student_id }}"
+                                        maxlength="50"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" />
                                 </div>
 
                                 <div>
                                     <label for="email"
                                         class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                                    <input type="email" id="email" placeholder="sample@student.edu.com"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" />
+                                    <input type="email" id="email" name="email" value="{{ Auth::user()->email }}"
+                                        required
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 @error('email') border-red-500 @enderror" />
+                                    @error('email')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
+                                <div>
+                                    <label for="department" class="block mb-2 text-sm font-medium text-gray-900">Department</label>
+                                    <input type="text" id="department" name="department" value="{{ Auth::user()->department }}"
+                                        maxlength="255"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="submit"
+                                    class="text-white bg-gray-800 hover:bg-gray-900 rounded-lg text-sm px-5 py-2.5">Save</button>
+                                <button type="button" @click="view = 'information'"
+                                    class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -91,19 +148,6 @@
                             <x-icons.editicon /> Edit
                         </button>
 
-                        <div class="flex flex-col justify-between h-full gap-2" x-show="view === 'EditInformation'">
-
-                            <!-- TOP -->
-                            <div>
-                                <button @click="view = 'information'" type="button"
-                                    class="text-white bg-gray-800 hover:bg-gray-900 rounded-lg text-sm px-5 py-2.5">
-                                    Save
-                                </button>
-                                <button @click="view = 'information'" type="button"
-                                    class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">
-                                    Cancel
-                                </button>
-                            </div>
 
                             <!-- BOTTOM -->
                             <!-- Change Password Button -->
@@ -317,3 +361,17 @@
 </x-navbar>
 
 <script src="//unpkg.com/alpinejs" defer></script>
+
+<script>
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('avatar-preview');
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

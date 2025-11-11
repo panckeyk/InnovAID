@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -87,6 +88,38 @@ class UserController extends Controller
         $backRoute = $this->getBackRoute($role);
 
         return view('user.userprofilepage', compact('role', 'backRoute'));
+    }
+
+    /**
+     * Update the user's profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'firstname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'lastname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'student_id' => 'nullable|string|max:50',
+            'department' => 'nullable|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ], [
+            'firstname.regex' => 'First name should only contain letters and spaces.',
+            'lastname.regex' => 'Last name should only contain letters and spaces.',
+        ]);
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if (Auth::user()->avatar && Storage::disk('public')->exists(Auth::user()->avatar)) {
+                Storage::disk('public')->delete(Auth::user()->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        Auth::user()->update($validated);
+
+        return redirect()->route('user.profile')
+            ->with('success', 'Profile updated successfully!');
     }
 
     /**

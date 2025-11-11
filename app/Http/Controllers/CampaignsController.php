@@ -105,7 +105,9 @@ class CampaignsController extends Controller
         $isAdmin = ($role === 'admin');
         $isAuthorized = $isCreator || $isAdmin;
         $isDonor = ($role === 'donor');
+        $isStudent = ($role === 'student');
         $isDonorOrGuest = $isDonor || ($role === 'guest');
+        $canViewActive = $isAuthorized || $isDonorOrGuest || $isStudent;
 
   
         if (in_array($campaign->status, ['draft', 'pending', 'rejected']) && !$isAuthorized) {
@@ -132,29 +134,40 @@ class CampaignsController extends Controller
             $backRoute = route('admin.admindashboard');
         } elseif ($isDonorOrGuest) {
             $backRoute = route('donor.page');
+        } elseif ($isCreator) {
+            $backRoute = route('user.campaign');
         } else {
+            $backRoute = route('login');
+        }
+
+        // Show campaign details for active/approved/completed campaigns
+        if (in_array($campaign->status, ['active', 'approved', 'completed'])) {
+            // For creators and admins, show the detailed view
+            if ($isAuthorized) {
+                return view('components.campaignpage', [
+                    'campaign' => $campaign,
+                    'role' => $role,
+                    'backRoute' => $backRoute,
+                ]);
+            }
+            
+            // For donors, guests, and students viewing other campaigns, show donor view
+            if ($isDonorOrGuest || $isStudent) {
+                $campaign->increment('views');
+                
+                // Update backRoute for students
+                if ($isStudent && !$isCreator) {
+                    $backRoute = route('user.page');
+                }
+                
+                return view('donor.donorcampaignview', [
+                    'campaign' => $campaign,
+                    'role' => $role,
+                    'backRoute' => $backRoute,
+                ]);
+            }
+        }
         
-            $backRoute = '/';
-        }
-
-        if (in_array($campaign->status, ['active', 'approved', 'completed']) && $isDonorOrGuest) {
-
-            $campaign->increment('views');
-
-            return view('donor.donorcampaignview', [ // <-- RENDERS THE DONOR VIEW!
-                'campaign' => $campaign,
-                'role' => $role,
-                'backRoute' => $backRoute,
-            ]);
-        }
-
-        if ($isAuthorized) {
-            return view('components.campaignpage', [ // <-- ORIGINAL ADMIN/CREATOR VIEW
-                'campaign' => $campaign,
-                'role' => $role,
-                'backRoute' => $backRoute,
-            ]);
-        }
         abort(404);
     }
 
@@ -184,12 +197,21 @@ class CampaignsController extends Controller
 
         // Use a dedicated UpdateCampaignRequest for validation if rules differ from Store
         $data = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'category' => 'sometimes|required|in:Technology,Education,Social Impact,Environment,Arts',
-            'goal_amount' => 'sometimes|required|numeric|min:100',
-            'deadline' => 'sometimes|required|date|after:today',
-            'image' => 'nullable|image|max:2048', // Validation for file update
+            'title' => 'sometimes|required|string|max:255|min:3',
+            'description' => 'sometimes|required|string|min:10|max:5000',
+            'category' => 'sometimes|required|in:Technology,Social Impact,Research,Art & Design,Environment,Health',
+            'goal_amount' => 'sometimes|required|numeric|min:100|max:999999999.99',
+            'deadline' => 'sometimes|required|date', // Allow past dates for editing existing campaigns
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120', // Validation for file update
+        ], [
+            'title.min' => 'The title must be at least 3 characters.',
+            'description.min' => 'The description must be at least 10 characters.',
+            'description.max' => 'The description may not be greater than 5000 characters.',
+            'goal_amount.min' => 'The funding goal must be at least $100.',
+            'goal_amount.max' => 'The funding goal is too large.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, jpg, png, gif, webp.',
+            'image.max' => 'The image may not be greater than 5MB.',
         ]);
 
         // 2. Handle File Upload (Image)
