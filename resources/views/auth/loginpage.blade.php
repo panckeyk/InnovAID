@@ -18,7 +18,7 @@
         <div class="bg-white w-1/2 flex justify-center items-center">
 
             <!-- Login Form -->
-            <form action="{{ route('login.submit') }}" method="POST" class="w-full max-w-xs" x-show="view === 'login'">
+            <form action="/login" method="POST" class="w-full max-w-xs" x-show="view === 'login'">
                 @csrf
                 <div class="mb-10">
                     <h1 class="text-3xl font-bold text-center">Login to your Account</h1>

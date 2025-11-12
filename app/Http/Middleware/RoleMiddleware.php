@@ -30,6 +30,6 @@ class RoleMiddleware
         }
 
         $userRole = $user->role ?? 'guest';
-        abort(403, 'Unauthorized access. Your role (' . $userRole . ') is not permitted to view this resource.');
+        return abort(403, 'Unauthorized access. Your role (' . $userRole . ') is not permitted to view this resource.');
     }
 }

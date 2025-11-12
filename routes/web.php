@@ -19,6 +19,7 @@ use App\Http\Controllers\AdminUserController;
 // ---------- AUTH ROUTES ----------
 Route::get('/', [AuthController::class, 'showLogin'])->name('loginpage');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signuppage');
 Route::post('/signup', [AuthController::class, 'register'])->name('signup.submit');
 Route::post('/', [AuthController::class, 'login'])->name('login.submit');

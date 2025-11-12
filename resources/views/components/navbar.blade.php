@@ -211,7 +211,7 @@
 
 
         <!-- Group Button  -->
-        <div class="flex justify-center mt-5">
+        {{-- <div class="flex justify-center mt-5">
 
             <div class="inline-flex rounded-md shadow-xs" role="group">
                 <button type="button"
@@ -230,7 +230,7 @@
                 </button>
             </div>
 
-        </div>
+        </div> --}}
     @endunless
 
     <main class="p-8">
