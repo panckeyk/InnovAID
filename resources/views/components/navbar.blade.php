@@ -38,7 +38,7 @@
                 <div class="flex items-center space-x-8">
                     <a class="flex items-center space-x-3 rtl:space-x-reverse">
                         <img src="{{ asset('Images/LogoInnovAid.png') }}"
-                            src="{{ Vite::asset('Images/LogoInnovAid.png') }}" loading="lazy" class="h-8"
+                            src="{{ asset('Images/LogoInnovAid.png') }}" loading="lazy" class="h-8"
                             alt="Logo" />
                         <span
                             class="self-center text-2xl text-[#1848a0] font-semibold whitespace-nowrap dark:text-white">
