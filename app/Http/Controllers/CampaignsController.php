@@ -180,7 +180,7 @@ class CampaignsController extends Controller
     public function edit(Campaign $campaign)
     {
         // Authorization: Only the creator can edit (and only if the status allows it)
-        if ($campaign->creator_id !== Auth::id() || !in_array($campaign->status, ['draft', 'rejected'])) {
+        if ($campaign->creator_id !== Auth::id() || !in_array($campaign->status, ['pending', 'active'])) {
             // You may want to use a Laravel Policy for this: Gate::authorize('update', $campaign);
             abort(403, 'Unauthorized. Campaign can only be edited when in draft or rejected status.');
         }
@@ -194,7 +194,7 @@ class CampaignsController extends Controller
     public function update(Request $request, Campaign $campaign)
     {
         // 1. Authorization Check (Crucial): Only creator can update, and only if status is 'draft' or 'rejected'.
-        if ($campaign->creator_id !== Auth::id() || !in_array($campaign->status, ['draft', 'rejected'])) {
+        if ($campaign->creator_id !== Auth::id() || !in_array($campaign->status, ['pending', 'active'])) {
             abort(403, 'Unauthorized. Campaign updates are restricted in the current status.');
         }
 
