@@ -40,8 +40,8 @@ Route::middleware('auth')->group(function () {
         // Dashboard & Profile (using your existing method names)
         //Route::get('/', [AdminController::class, 'layout'])->name('admin.page');
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.admindashboard');
-        Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
-        Route::put('/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+        Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.adminprofilepage'); // Changed
+        Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update'); // Changed
         Route::post('/admin/campaigns/{campaign}/approve', [AdminController::class, 'approve'])->name('admin.campaigns.approve');
         Route::post('/admin/campaigns/{campaign}/reject', [AdminController::class, 'reject'])->name('admin.campaigns.reject');
         Route::get('/approved', [AdminController::class, 'layout'])->name('approved.index');

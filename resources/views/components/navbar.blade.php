@@ -155,7 +155,7 @@
                                         try {
                                             switch ($role) {
                                                 case 'admin':
-                                                    $profileRoute = route('admin.profile');
+                                                    $profileRoute = route('admin.adminprofilepage');
                                                     break;
                                                 case 'donor':
                                                     $profileRoute = route('donor.profile');

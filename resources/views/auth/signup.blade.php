@@ -54,6 +54,8 @@
                     class="block px-4 py-2 hover:bg-gray-100">Student</a></li>
                 <li><a href="#" @click.prevent="selectedRole = 'Donor'; open = false"
                     class="block px-4 py-2 hover:bg-gray-100">Donor</a></li>
+                <!-- <li><a href="#" @click.prevent="selectedRole = 'Admin'; open = false"
+                    class="block px-4 py-2 hover:bg-gray-100">Admin</a></li> -->
               </ul>
             </div>
 
@@ -81,13 +83,9 @@
             <div>
               <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First
                 name</label>
-              <input type="text" id="first_name" name="firstname"
-                value="{{ old('firstname') }}"
+              <input type="text" id="first_name" name="firstname" value="{{ old('firstname') }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('firstname') border-red-500 @enderror"
-                placeholder="John" 
-                required 
-                maxlength="35"
-                pattern="[A-Za-z\s]+"
+                placeholder="John" required maxlength="35" pattern="[A-Za-z\s]+"
                 title="First name should only contain letters and spaces" />
               @error('firstname')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -96,13 +94,9 @@
             <div>
               <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last
                 name</label>
-              <input type="text" id="last_name" name="lastname"
-                value="{{ old('lastname') }}"
+              <input type="text" id="last_name" name="lastname" value="{{ old('lastname') }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('lastname') border-red-500 @enderror"
-                placeholder="Doe" 
-                required 
-                maxlength="35"
-                pattern="[A-Za-z\s]+"
+                placeholder="Doe" required maxlength="35" pattern="[A-Za-z\s]+"
                 title="Last name should only contain letters and spaces" />
               @error('lastname')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -113,13 +107,9 @@
           <!-- Email & Password -->
           <div class="mb-5">
             <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-            <input type="email" id="email" name="email"
-              value="{{ old('email') }}"
+            <input type="email" id="email" name="email" value="{{ old('email') }}"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('email') border-red-500 @enderror"
-              placeholder="sample@student.edu.com" 
-              required 
-              maxlength="255"
-              autocomplete="email" />
+              placeholder="sample@student.edu.com" required maxlength="255" autocomplete="email" />
             @error('email')
               <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
@@ -128,10 +118,7 @@
             <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
             <input type="password" id="password" name="password"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('password') border-red-500 @enderror"
-              placeholder="Enter password" 
-              required 
-              minlength="8"
-              autocomplete="new-password" />
+              placeholder="Enter password" required minlength="8" autocomplete="new-password" />
             @error('password')
               <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
@@ -142,10 +129,7 @@
               Password</label>
             <input type="password" id="confirm-password" name="password_confirmation"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Confirm password" 
-              required 
-              minlength="8"
-              autocomplete="new-password" />
+              placeholder="Confirm password" required minlength="8" autocomplete="new-password" />
           </div>
 
           <!-- Create Account Button -->

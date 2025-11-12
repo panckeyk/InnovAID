@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $request->filled('remember'))) {
             $request->session()->regenerate();
-            
+
             // Update last login
             $user = Auth::user();
             $user->update(['last_login' => now()]);
@@ -64,7 +64,7 @@ class AuthController extends Controller
             'lastname' => 'required|string|max:35|regex:/^[A-Za-z\s]+$/',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:Student,Donor',
+            'role' => 'required|string|in:Student,Donor,Admin',
         ], [
             'firstname.regex' => 'First name should only contain letters and spaces.',
             'lastname.regex' => 'Last name should only contain letters and spaces.',
@@ -83,6 +83,7 @@ class AuthController extends Controller
 
         // Only allow Student and Donor roles to register
         return match ($user->role) {
+            'admin' => redirect()->route('admin.admindashboard'),
             'donor' => redirect()->route('donor.page'),
             'student' => redirect()->route('user.page'),
             default => redirect()->route('login'),

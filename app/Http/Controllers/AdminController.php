@@ -202,7 +202,7 @@ class AdminController extends Controller
 
         Auth::user()->update($validated);
 
-        return redirect()->route('admin.profile')
+        return redirect()->route('admin.adminprofilepage')
             ->with('success', 'Profile updated successfully!');
     }
 
