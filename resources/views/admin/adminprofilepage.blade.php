@@ -23,17 +23,11 @@
                 
                 <!-- Profile Picture -->
                 <div class="relative shrink-0 h-40 w-40 rounded-full overflow-hidden border-2 border-gray-300 cursor-pointer group">
-                    @if(Auth::user()->avatar)
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
-                            alt="Profile Picture" class="h-full w-full object-cover object-center">
-                    @else
+                   
                         <div class="h-full w-full flex items-center justify-center bg-blue-600 text-white text-5xl font-bold">
                             {{ strtoupper(substr(Auth::user()->firstname ?? Auth::user()->name ?? 'A', 0, 1)) }}
                         </div>
-                    @endif
-                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center text-white font-semibold text-sm transition-opacity duration-300">
-                        <span class="opacity-0 group-hover:opacity-100">Change</span>
-                    </div>
+                    
                 </div>
 
                 <!-- Profile Information -->
@@ -67,16 +61,7 @@
                             
                             <!-- Avatar Upload -->
                             <div class="mb-4">
-                                <label for="avatar" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
-                                <input type="file" id="avatar" name="avatar" accept="image/*"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                    onchange="previewAvatar(this)">
-                                <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WEBP (Max 5MB)</p>
-                                <img id="avatar-preview" class="mt-2 h-24 w-24 rounded-full object-cover border-2 border-gray-300 hidden"
-                                    src="" alt="Avatar preview">
-                                @error('avatar')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                               
                             </div>
                             
                             <div class="grid gap-6 mb-6 md:grid-cols-2">

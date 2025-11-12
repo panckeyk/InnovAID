@@ -24,23 +24,13 @@
 
                 <!-- Profile Picture -->
                 <div class="relative shrink-0 h-40 w-40 rounded-full overflow-hidden border-2 border-gray-300 cursor-pointer group">
-                    @if(Auth::user()->avatar)
-                        <!-- Uploaded profile picture -->
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile Picture"
-                            class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105">
-                    @else
-                        <!-- First letter fallback -->
-                        <div
-                            class="h-full w-full flex items-center justify-center bg-blue-600 font-semibold text-white text-5xl transition-transform duration-300 group-hover:scale-105">
-                            {{ strtoupper(substr(Auth::user()->firstname ?? 'U', 0, 1)) }}
-                        </div>
-                    @endif
-
-                    <!-- Hover Overlay -->
+                   
+                    <!-- First letter fallback -->
                     <div
-                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center text-white font-semibold text-sm transition-opacity duration-300">
-                        <span class="opacity-0 group-hover:opacity-100">Change</span>
+                        class="h-full w-full flex items-center justify-center bg-blue-600 font-semibold text-white text-5xl transition-transform duration-300 group-hover:scale-105">
+                        {{ strtoupper(substr(Auth::user()->firstname ?? 'U', 0, 1)) }}
                     </div>
+                                      
                 </div>
 
                 <!-- Profile Information -->
@@ -70,16 +60,11 @@
                             
                             <!-- Avatar Upload -->
                             <div class="mb-4">
-                                <label for="avatar" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
-                                <input type="file" id="avatar" name="avatar" accept="image/*"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 rounded-full file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                    onchange="previewAvatar(this)">
-                                <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF or WEBP (Max 5MB)</p>
-                                <img id="avatar-preview" class="mt-2 h-24 w-24 rounded-full object-cover border-2 border-gray-300 {{ Auth::user()->avatar ? '' : 'hidden' }}"
-                                    src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : '' }}" alt="Avatar preview">
-                                @error('avatar')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                                <!-- <div class="rounded-full w-8 h-8 bg-blue-600 flex justify-center items-center font-semibold text-white">
+                                    <div>
+                                        {{ strtoupper(substr(Auth::user()->firstname, 0, 1)) }}
+                                    </div> 
+                                </div> -->
                             </div>
                             
                             <div class="grid gap-6 mb-6 md:grid-cols-2">
@@ -137,12 +122,13 @@
                                     class="text-white bg-gray-800 hover:bg-gray-900 rounded-lg text-sm px-5 py-2.5">Save</button>
                                 <button type="button" @click="view = 'information'"
                                     class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">Cancel</button>
-                                <button type="button" data-modal-target="password-modal"
+                                <!-- <button type="button" data-modal-target="password-modal"
                                     data-modal-toggle="password-modal"
                                     class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg text-sm px-5 py-2.5">
                                     Change Password
-                                </button>
+                                </button> -->
                             </div>
+                            
 
                             
                         </form>
