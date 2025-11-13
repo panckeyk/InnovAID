@@ -29,6 +29,7 @@ class Campaign extends Model
         'deadline',
         'status',
         'image',
+        'image_public_id',
         'featured',
         'views',
         'rejection_reason',

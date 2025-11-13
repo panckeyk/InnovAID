@@ -68,10 +68,9 @@ class CampaignsController extends Controller
         $validatedData = $request->validated();
 
         // 2. File Handling
-        $imagePath = $request->file('image')->store('campaign_images', 'public');
-        $pdfPath = $request->hasFile('proposal_pdf')
-            ? $request->file('proposal_pdf')->store('campaign_proposals', 'public')
-            : null;
+        $imagePath = $request->file('image')->store('innovaid/campaign_images', 'cloudinary');
+        $imageUrl = Storage::disk('cloudinary')->url($imagePath);
+
 
         // 3. Database Insertion
         $campaign = Campaign::create([
@@ -84,6 +83,8 @@ class CampaignsController extends Controller
             'deadline' => $validatedData['deadline'],
             'status' => 'pending', // Start as draft until the student submits it for approval
             'image' => $imagePath,
+            'image_public_id' => $imagePath,
+            ''
         ]);
 
         return redirect()->route('user.campaign')->with('success', 'Campaign draft created successfully! 🎉');
@@ -109,7 +110,7 @@ class CampaignsController extends Controller
         $isDonorOrGuest = $isDonor || ($role === 'guest');
         $canViewActive = $isAuthorized || $isDonorOrGuest || $isStudent;
 
-  
+
         if (in_array($campaign->status, ['draft', 'pending', 'rejected']) && !$isAuthorized) {
             abort(404, 'Campaign Not Found.');
         }
@@ -153,16 +154,16 @@ class CampaignsController extends Controller
                     'backRoute' => $backRoute,
                 ]);
             }
-            
+
             // For donors, guests, and students viewing other campaigns, show donor view
             if ($isDonorOrGuest || $isStudent) {
                 $campaign->increment('views');
-                
+
                 // Update backRoute for students
                 if ($isStudent && !$isCreator) {
                     $backRoute = route('user.page');
                 }
-                
+
                 return view('donor.donorcampaignview', [
                     'campaign' => $campaign,
                     'role' => $role,
@@ -170,7 +171,7 @@ class CampaignsController extends Controller
                 ]);
             }
         }
-        
+
         abort(404);
     }
 
@@ -219,11 +220,13 @@ class CampaignsController extends Controller
 
         // 2. Handle File Upload (Image)
         if ($request->hasFile('image')) {
-            if ($campaign->image && Storage::disk('public')->exists($campaign->image)) {
-                Storage::disk('public')->delete($campaign->image);
+            if ($campaign->image && Storage::disk('cloudinary')->exists($campaign->image)) {
+                Storage::disk('cloudinary')->delete($campaign->image);
             }
             // Store new image
-            $data['image'] = $request->file('image')->store('campaign_images', 'public');
+             $imagePath = $request->file('image')->store('innovaid/campaign_images', 'cloudinary');
+                $data['image'] = Storage::disk('cloudinary')->url($imagePath);
+                $data['image_public_id'] = $imagePath;
         }
 
         // If the user modified the content, it should go back to pending for approval.
@@ -257,8 +260,8 @@ class CampaignsController extends Controller
         }
 
         // 3. Delete Associated File (Image)
-        if ($campaign->image && Storage::disk('public')->exists($campaign->image)) {
-            Storage::disk('public')->delete($campaign->image);
+        if ($campaign->image && Storage::disk('cloudinary')->exists($campaign->image_public_id)) {
+            Storage::disk('cloudinary')->delete($campaign->image_public_id);
         }
 
         // 4. Delete Record
