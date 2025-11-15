@@ -36,9 +36,8 @@
             <div class="w-full lg:w-2/3">
                 <div>
                     <div class="bg-white border border-gray-200 shadow-sm h-full rounded-lg aspect-video overflow-hidden">
-                        <img class="w-full h-full object-cover"
-                            src="{{ $campaign->image ? asset('storage/' . $campaign->image) : asset('Images/default_campaign_image.png') }}"
-                            alt="{{ $campaign->title }} Image">
+                        <x-cloudinary::image public-id="{{ $campaign->image_public_id }}" width="80" height="40"
+                        class="w-full h-full object-cover" />
                     </div>
                 </div>
 
